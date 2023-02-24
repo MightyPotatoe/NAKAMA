@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NAKAMA</string>
+    <string name="play_button">Play Button</string>
+    <string name="pause_button">Pause Button</string>
+    <string name="reset_button">Reset Button</string>
+    <string name="done_button">Done Button</string>
+    <string name="default_timer_value">02:00:00</string>
 </resources>
