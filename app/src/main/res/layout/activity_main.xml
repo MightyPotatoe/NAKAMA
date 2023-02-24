@@ -1,34 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        app:indicatorColor="@color/md_theme_light_primary"
-        app:trackColor="@color/md_theme_light_surfaceVariant"
-        android:id="@+id/timeProgressBar"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
-        android:progress="85"
-        app:indicatorSize="280dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:trackThickness="24dp" />
-
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/timeTextView"
+        style="@style/TextAppearance.Material3.DisplayMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/TextAppearance.Material3.DisplayMedium"
-        android:text="03:00:00"
+        android:text="@string/default_timer_value"
         app:layout_constraintBottom_toBottomOf="@+id/timeProgressBar"
         app:layout_constraintEnd_toEndOf="@+id/timeProgressBar"
         app:layout_constraintStart_toStartOf="@+id/timeProgressBar"
         app:layout_constraintTop_toTopOf="@+id/timeProgressBar" />
 
-  </androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/timeProgressBar"
+        android:layout_width="280dp"
+        android:layout_height="502dp"
+        android:progress="85"
+        app:indicatorColor="@color/md_theme_light_primary"
+        app:indicatorSize="280dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:trackColor="@color/md_theme_light_surfaceVariant"
+        app:trackThickness="24dp" />
+
+    <ImageButton
+        android:id="@+id/playButton"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="32dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/outline_play_circle_filled_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/play_button" />
+
+    <ImageButton
+        android:id="@+id/pauseButton"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/round_pause_circle_filled_24"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="@+id/playButton"
+        app:layout_constraintStart_toStartOf="@+id/playButton"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
+        android:contentDescription="@string/pause_button" />
+
+    <ImageButton
+        android:id="@+id/resetButton"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/outline_replay_circle_filled_24"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
+        app:layout_constraintEnd_toStartOf="@+id/playButton"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
+        android:visibility="invisible"
+        android:contentDescription="@string/reset_button" />
+
+    <ImageButton
+        android:id="@+id/doneButton"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitStart"
+        android:src="@drawable/baseline_check_circle_24"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
+        app:layout_constraintStart_toEndOf="@+id/playButton"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
+        android:visibility="invisible"
+        android:contentDescription="@string/done_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
