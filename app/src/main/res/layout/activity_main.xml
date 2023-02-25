@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Activities.MainActivity">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/timeTextView"
@@ -45,7 +45,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="@string/play_button" />
+        android:contentDescription="@string/play_button"
+        android:onClick="onPlayButtonClick"/>
 
     <ImageButton
         android:id="@+id/pauseButton"

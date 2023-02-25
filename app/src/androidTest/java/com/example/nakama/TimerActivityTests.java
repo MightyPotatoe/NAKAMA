@@ -1,15 +1,14 @@
 package com.example.nakama;
 
-import static androidx.test.espresso.Espresso.onView;
-
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.nakama.Activities.MainActivity;
+
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
