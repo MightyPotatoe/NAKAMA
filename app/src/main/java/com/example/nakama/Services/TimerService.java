@@ -14,6 +14,7 @@ public class TimerService extends Service {
     public static boolean isServiceRunning = false;
     private BroadcastSender broadcastSender;
     public static final String TIME = "TIME";
+    public static final String POLLING_FREQUENCY = "POLLING_FREQUENCY";
 
     //---TIMER----
     private CountDownTimer countDownTimer;
@@ -39,8 +40,9 @@ public class TimerService extends Service {
         Log.v("SERVICE DEBUG:", "Timer service started");
         //Assigning data passed by intent
         int currentStepTime = intent.getIntExtra(TIME, 120);
+        int pollingFrequency = intent.getIntExtra(POLLING_FREQUENCY, 1000);
         //Creating and starting countdown Timer
-        initializeCountDownTimer(currentStepTime);
+        initializeCountDownTimer(currentStepTime, pollingFrequency);
         countDownTimer.start();
         return START_STICKY;
     }
@@ -56,10 +58,10 @@ public class TimerService extends Service {
 
     //----------------COUNTDOWN TIMER-----------------------------------------------
     //---Definition
-    public void initializeCountDownTimer(int timerValueInMilis) {
+    public void initializeCountDownTimer(int timerValueInMilis, int pollingFrequency) {
         Log.v("TIMER DEBUG:", "Initializing countdown timer");
         //Creating countdownTimer
-        countDownTimer = new CountDownTimer(timerValueInMilis, 10) {
+        countDownTimer = new CountDownTimer(timerValueInMilis, pollingFrequency) {
             public void onTick(long millisUntilFinished) {
                 broadcastSender.sendBroadcast(TIMER_ACTION, BROADCAST_TIMER_VALUE, millisUntilFinished);
             }
