@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     private final int DEFAULT_TIMER_VALUE = 10000;
+    private final int POLLING_FREQUENCY = 1000;
     TextView timerTextView;
     CircularProgressIndicator circularProgressIndicator;
     private Intent timerServiceIntent;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         if(!TimerService.isServiceRunning){
             Log.v("ACTIVITY DEBUG:", "Attempting to start service");
             timerServiceIntent.putExtra(TimerService.TIME, DEFAULT_TIMER_VALUE);
+            timerServiceIntent.putExtra(TimerService.POLLING_FREQUENCY, POLLING_FREQUENCY);
             this.startService(timerServiceIntent);
         }
         findViewById(R.id.playButton).setVisibility(View.INVISIBLE);
