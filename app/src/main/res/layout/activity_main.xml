@@ -60,7 +60,8 @@
         app:layout_constraintEnd_toEndOf="@+id/playButton"
         app:layout_constraintStart_toStartOf="@+id/playButton"
         app:layout_constraintTop_toTopOf="@+id/playButton"
-        android:contentDescription="@string/pause_button" />
+        android:contentDescription="@string/pause_button"
+        android:onClick="onPauseButtonClick"/>
 
     <ImageButton
         android:id="@+id/resetButton"

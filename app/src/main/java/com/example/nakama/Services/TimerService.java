@@ -2,7 +2,6 @@ package com.example.nakama.Services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
@@ -65,7 +64,8 @@ public class TimerService extends Service {
                 broadcastSender.sendBroadcast(TIMER_ACTION, BROADCAST_TIMER_VALUE, millisUntilFinished);
             }
             public void onFinish() {
-                broadcastSender.sendBroadcast(TIMER_ACTION, BROADCAST_TIMER_VALUE, 0);
+                broadcastSender.sendBroadcast(TIMER_ACTION, BROADCAST_TIMER_VALUE, 0L);
+                onDestroy();
             }
         };
     }
