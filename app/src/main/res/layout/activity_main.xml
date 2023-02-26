@@ -24,7 +24,7 @@
         android:progress="85"
         app:indicatorColor="@color/md_theme_light_primary"
         app:indicatorSize="280dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,6 +90,7 @@
         app:layout_constraintStart_toEndOf="@+id/playButton"
         app:layout_constraintTop_toTopOf="@+id/playButton"
         android:visibility="invisible"
-        android:contentDescription="@string/done_button" />
+        android:contentDescription="@string/done_button"
+        android:onClick="onDoneButtonClick"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
