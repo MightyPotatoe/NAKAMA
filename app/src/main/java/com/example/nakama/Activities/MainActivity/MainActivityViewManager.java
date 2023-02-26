@@ -7,14 +7,19 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.R;
+import com.example.nakama.Utils.Converter;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
-import org.apache.commons.lang3.time.DurationFormatUtils;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class MainActivityViewManager {
+
+    public MainActivityViewManager(AppCompatActivity activity) {
+        this.timerTextView = activity.findViewById(R.id.timeTextView);
+        timerProgressBar = activity.findViewById(R.id.timeProgressBar);
+        playButton = activity.findViewById(R.id.playButton);
+        pauseButton = activity.findViewById(R.id.pauseButton);
+        resetButton = activity.findViewById(R.id.resetButton);
+        doneButton = activity.findViewById(R.id.doneButton);
+    }
 
     private final TextView timerTextView;
     private final CircularProgressIndicator timerProgressBar;
@@ -25,15 +30,6 @@ public class MainActivityViewManager {
 
     public TextView getTimerTextView() {
         return timerTextView;
-    }
-
-    public MainActivityViewManager(AppCompatActivity activity) {
-        this.timerTextView = activity.findViewById(R.id.timeTextView);
-        timerProgressBar = activity.findViewById(R.id.timeProgressBar);
-        playButton = activity.findViewById(R.id.playButton);
-        pauseButton = activity.findViewById(R.id.pauseButton);
-        resetButton = activity.findViewById(R.id.resetButton);
-        doneButton = activity.findViewById(R.id.doneButton);
     }
     public void setViewToDefaultState(int timeInMillis){
         //Initialize default view
@@ -47,10 +43,7 @@ public class MainActivityViewManager {
 
     public void setTimerCurrentTime(long timeRemain){
         timerProgressBar.setProgress((int)timeRemain);
-        String timeLeft = DurationFormatUtils.formatDuration(timeRemain, "mm:ss:SS", true);
-        Pattern pattern = Pattern.compile("\\d{2}:\\d{2}:\\d{2}");
-        Matcher matcher = pattern.matcher(timeLeft);
-        if (matcher.find()) {timerTextView.setText(matcher.group(0));}
+        timerTextView.setText(Converter.millisToString(timeRemain));
     }
 
     public void setViewToPlayedState(){

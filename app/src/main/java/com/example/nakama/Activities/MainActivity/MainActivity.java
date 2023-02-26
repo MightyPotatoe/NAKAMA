@@ -12,6 +12,7 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.nakama.Activities.AttemptSummaryActivity.AttemptSummaryActivity;
 import com.example.nakama.R;
 import com.example.nakama.Services.TimerService;
 import com.example.nakama.Utils.Converter;
@@ -19,6 +20,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String INTENT_EXTRA_TIME = "TIME";
+    public static final String INTENT_EXTRA_SCORE = "SCORE";
     private final int DEFAULT_TIMER_VALUE = 10000;
 
     MainActivityViewManager viewManager;
@@ -88,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         if(!TimerService.isServiceRunning){
             Log.v("ACTIVITY DEBUG:", "Attempting to start service");
             //Get time from textField
-            timerServiceIntent.putExtra(TimerService.TIME, Converter.getMillisFromString((String) viewManager.getTimerTextView().getText()));
+            timerServiceIntent.putExtra(TimerService.TIME, Converter.stringToMillis((String) viewManager.getTimerTextView().getText()));
             timerServiceIntent.putExtra(TimerService.POLLING_FREQUENCY, POLLING_FREQUENCY);
             this.startService(timerServiceIntent);
         }
@@ -107,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
         showConfirmResetDialog();
     }
 
+    public void onDoneButtonClick(View view) {
+        Log.v("ACTIVITY DEBUG:", "Done button pressed");
+        showConfirmAttemptDialog();
+    }
+
     public void showTimeUpDialog() {
         new MaterialAlertDialogBuilder(MainActivity.this)
                 .setTitle(R.string.timeout_dialog_title)
@@ -123,5 +131,31 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> viewManager.setViewToDefaultState(DEFAULT_TIMER_VALUE))
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
+    }
+
+    public void showConfirmAttemptDialog() {
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle(R.string.confirm_dialog_title)
+                .setMessage(R.string.confirm_attempt_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
+                    //getting duration of this run
+                    int timeLeft = Converter.stringToMillis((String) viewManager.getTimerTextView().getText());
+                    int runTimeInMillis = DEFAULT_TIMER_VALUE - timeLeft;
+                    Intent intent = new Intent(this, AttemptSummaryActivity.class);
+                    intent.putExtra(INTENT_EXTRA_TIME, runTimeInMillis);
+                    intent.putExtra(INTENT_EXTRA_SCORE, calculateUserScore());
+                    startActivity(intent);
+                })
+                .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
+                .show();
+    }
+
+    public int calculateUserScore(){
+        int baseScore = 200;
+        int timeLeft = Converter.stringToMillis((String) viewManager.getTimerTextView().getText());
+        if(timeLeft == 0){
+            baseScore = 0;
+        }
+        return baseScore;
     }
 }

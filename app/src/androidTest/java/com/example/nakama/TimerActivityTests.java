@@ -334,28 +334,36 @@ public class TimerActivityTests {
     }
 
     public void validateConfirmResetDialog(){
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.confirm_dialog_title));
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.confirm_reset_dialog_message));
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.dialog_positive_yes_button));
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.dialog_negative_button));
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.confirm_reset_dialog_message));
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.dialog_negative_button));
     }
 
     public void validateConfirmResetDialogIsGone(){
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.confirm_dialog_title));
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.confirm_reset_dialog_message));
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.dialog_positive_yes_button));
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.dialog_negative_button));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.confirm_reset_dialog_message));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_negative_button));
     }
 
     public void validateTimeoutDialog(){
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_title));
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_message));
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.dialog_positive_ok_button));
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.timeout_dialog_title));
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.timeout_dialog_message));
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.dialog_positive_ok_button));
     }
 
     public void validateTimeoutDialogIsGone(){
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_title));
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_message));
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.dialog_positive_ok_button));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.timeout_dialog_title));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.timeout_dialog_message));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_positive_ok_button));
+    }
+
+    public void validateConfirmAttemptDialogIsGone(){
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.confirm_attempt_dialog_message));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_negative_button));
+
     }
 }
