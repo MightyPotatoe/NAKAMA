@@ -17,7 +17,7 @@ public class TimerService extends Service {
     public static final String POLLING_FREQUENCY = "POLLING_FREQUENCY";
 
     //---TIMER----
-    private CountDownTimer countDownTimer;
+    private static CountDownTimer countDownTimer;
     public static String TIMER_ACTION = "TIMER_ACTION";
     public static String BROADCAST_TIMER_VALUE = "TIMER_VALUE";
 
@@ -70,5 +70,9 @@ public class TimerService extends Service {
                 onDestroy();
             }
         };
+    }
+
+    public static void pauseTimer(){
+        countDownTimer.cancel();
     }
 }

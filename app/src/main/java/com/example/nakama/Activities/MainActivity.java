@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     CircularProgressIndicator circularProgressIndicator;
     private Intent timerServiceIntent;
     PowerManager.WakeLock wakeLock;
-    PowerManager mgr;
+    PowerManager powerManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(broadcastReceiver, new IntentFilter(TimerService.TIMER_ACTION)); //<----Register
 
         //Setting up power management
-        mgr = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
-        wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelog");
+        powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelog");
         wakeLock.acquire(15*60*1000L /*15 minutes*/);
 
         //Initialize default view
@@ -100,18 +100,38 @@ public class MainActivity extends AppCompatActivity {
 
     //----------------------------------------------------BUTTONS ACTIONS--------------------------------------------------------------------
     public void onPlayButtonClick(View view) {
+
         Log.v("ACTIVITY DEBUG:", "Play button pressed");
         if(!TimerService.isServiceRunning){
             Log.v("ACTIVITY DEBUG:", "Attempting to start service");
-            timerServiceIntent.putExtra(TimerService.TIME, DEFAULT_TIMER_VALUE);
+            //Get time from textField
+            timerServiceIntent.putExtra(TimerService.TIME, getTimerValueInMillis());
             timerServiceIntent.putExtra(TimerService.POLLING_FREQUENCY, POLLING_FREQUENCY);
             this.startService(timerServiceIntent);
         }
         findViewById(R.id.playButton).setVisibility(View.INVISIBLE);
+        findViewById(R.id.resetButton).setVisibility(View.INVISIBLE);
+        findViewById(R.id.doneButton).setVisibility(View.INVISIBLE);
         findViewById(R.id.pauseButton).setVisibility(View.VISIBLE);
     }
 
     public void onPauseButtonClick(View view) {
         Log.v("ACTIVITY DEBUG:", "Pause button pressed");
+        TimerService.pauseTimer();
+        this.stopService(timerServiceIntent);
+        findViewById(R.id.pauseButton).setVisibility(View.INVISIBLE);
+        findViewById(R.id.playButton).setVisibility(View.VISIBLE);
+        findViewById(R.id.resetButton).setVisibility(View.VISIBLE);
+        findViewById(R.id.doneButton).setVisibility(View.VISIBLE);
+    }
+
+    public int getTimerValueInMillis(){
+        TextView timerTextView = findViewById(R.id.timeTextView);
+        String timerText = (String) timerTextView.getText();
+        String[] timerTextSplit = timerText.split(":");
+        int timerInMillis = Integer.parseInt(timerTextSplit[0]) * 60 * 1000;
+        timerInMillis += Integer.parseInt(timerTextSplit[1]) * 1000;
+        timerInMillis += Integer.parseInt(timerTextSplit[2]) * 10;
+        return timerInMillis;
     }
 }

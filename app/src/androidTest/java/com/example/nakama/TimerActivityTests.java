@@ -94,6 +94,127 @@ public class TimerActivityTests {
         scenario.close();
     }
 
+    /**
+     * Given user is on MainActivity
+     * And timer is set to 10 seconds
+     * When user press 'play' button and waits 2s
+     * And user press 'pause'
+     * Then following elements are displayed:
+     * | ELEMENT           | VISIBILITY |
+     * | Time Progress Bar | VISIBLE    |
+     * | Play button       | VISIBLE    |
+     * | Pause button      | INVISIBLE  |
+     * | Reset button      | VISIBLE    |
+     * | Done button       | VISIBLE    |
+     * | Time TextView     | VISIBLE    |
+     * When user waits 2s
+     * Then values on timer and progress bar are not changed
+     * When user press 'play' and waits 1s
+     * Then following elements are displayed:
+     * | ELEMENT           | VISIBILITY |
+     * | Time Progress Bar | VISIBLE    |
+     * | Play button       | INVISIBLE  |
+     * | Pause button      | VISIBLE    |
+     * | Reset button      | INVISIBLE  |
+     * | Done button       | INVISIBLE  |
+     * | Time TextView     | VISIBLE    |
+     * When user press 'pause'
+     * Then following elements are displayed:
+     * | ELEMENT           | VISIBILITY |
+     * | Time Progress Bar | VISIBLE    |
+     * | Play button       | VISIBLE    |
+     * | Pause button      | INVISIBLE  |
+     * | Reset button      | VISIBLE    |
+     * | Done button       | VISIBLE    |
+     * | Time TextView     | VISIBLE    |
+     * And timer value and progress bar progress is lesser than on previous pause
+     * When user waits 2s
+     * Then values on timer and progress bar are not changed
+     * When user press 'play' and waits for timer to finish
+     * Then After timer is finished following elements are displayed:
+     * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
+     * | Time Progress Bar | VISIBLE    |          |10000 | 0        |
+     * | Play button       | INVISIBLE  |          |      |          |
+     * | Pause button      | INVISIBLE  |          |      |          |
+     * | Reset button      | VISIBLE    |          |      |          |
+     * | Done button       | VISIBLE    |          |      |          |
+     * | Time TextView     | VISIBLE    | 00:00:00 |      |          |
+     */
+    @Test
+    public void timer_activity_should_pause_and_continue() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        initializeView(scenario);
+        //Click start and wait 2s
+        onView(withId(R.id.playButton)).perform(click());
+        Thread.sleep(2000);
+
+        //Click pause
+        onView(withId(R.id.pauseButton)).perform(click());
+        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
+        Assert.assertNotEquals("00:10:00", textView.getText());
+        Assert.assertEquals(10000, circularProgressIndicator.getMax());
+        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
+        String timerValueOnPause = (String) textView.getText();
+        int progressBarMaxOnPause = circularProgressIndicator.getMax();
+        int progressBarProgressOnPause = circularProgressIndicator.getProgress();
+
+        //Wait 2s to check if timer is actually stopped
+        Thread.sleep(2000);
+        Assert.assertEquals(timerValueOnPause, (String) textView.getText());
+        Assert.assertEquals(progressBarMaxOnPause, circularProgressIndicator.getMax());
+        Assert.assertEquals(progressBarProgressOnPause, circularProgressIndicator.getProgress());
+
+        //Click play and wait 1s
+        onView(withId(R.id.playButton)).perform(click());
+        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, pauseButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
+        Assert.assertNotEquals("00:10:00", textView.getText());
+        Assert.assertEquals(10000, circularProgressIndicator.getMax());
+        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
+        Thread.sleep(1000);
+
+        //Click pause again
+        onView(withId(R.id.pauseButton)).perform(click());
+        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
+        Assert.assertNotEquals("00:10:00", textView.getText());
+        Assert.assertEquals(10000, circularProgressIndicator.getMax());
+        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
+        String timerValueOnSecondPause = (String) textView.getText();
+        int progressBarMaxOnSecondPause = circularProgressIndicator.getMax();
+        int progressBarProgressOnSecondPause = circularProgressIndicator.getProgress();
+        Assert.assertTrue(progressBarProgressOnSecondPause < progressBarProgressOnPause);
+
+        //Wait 1s to check if timer is actually stopped
+        Thread.sleep(2000);
+        Assert.assertEquals(timerValueOnSecondPause, (String) textView.getText());
+        Assert.assertEquals(progressBarMaxOnSecondPause, circularProgressIndicator.getMax());
+        Assert.assertEquals(progressBarProgressOnSecondPause, circularProgressIndicator.getProgress());
+
+        //Cllick play and wait for timer to be finished
+        onView(withId(R.id.playButton)).perform(click());
+        Thread.sleep(10000);
+        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
+        Assert.assertEquals("00:00:00", textView.getText());
+        Assert.assertEquals(10000, circularProgressIndicator.getMax());
+        Assert.assertEquals(0, circularProgressIndicator.getProgress());
+        scenario.close();
+    }
+
     private <T extends Activity> void initializeView(ActivityScenario<T> scenario) {
         scenario.onActivity(activity -> {
             textView = activity.findViewById(R.id.timeTextView);
