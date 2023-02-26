@@ -64,36 +64,14 @@ public class TimerActivityTests {
     public void timer_activity_should_display_play_button_on_launch() throws InterruptedException {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         initializeView(scenario);
-        Assert.assertEquals(View.VISIBLE, circularProgressIndicator.getVisibility());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertEquals(10000, circularProgressIndicator.getProgress());
-        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertEquals("00:10:00", textView.getText());
+        validateDefaultActivityState();
 
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(1000);
-        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertNotEquals("00:10:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
+        validateInProgressActivityState();
 
         Thread.sleep(10000);
-        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertEquals("00:00:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertEquals(0, circularProgressIndicator.getProgress());
+        validateFinishedActivityState();
         scenario.close();
     }
 
@@ -148,23 +126,16 @@ public class TimerActivityTests {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         initializeView(scenario);
         //Click start and wait 2s
+        validateDefaultActivityState();
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(2000);
-
+        validateInProgressActivityState();
         //Click pause
         onView(withId(R.id.pauseButton)).perform(click());
-        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertNotEquals("00:10:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
+        validatePausedActivityState();
         String timerValueOnPause = (String) textView.getText();
         int progressBarMaxOnPause = circularProgressIndicator.getMax();
         int progressBarProgressOnPause = circularProgressIndicator.getProgress();
-
         //Wait 2s to check if timer is actually stopped
         Thread.sleep(2000);
         Assert.assertEquals(timerValueOnPause, textView.getText());
@@ -173,31 +144,16 @@ public class TimerActivityTests {
 
         //Click play and wait 1s
         onView(withId(R.id.playButton)).perform(click());
-        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertNotEquals("00:10:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
         Thread.sleep(1000);
+        validateInProgressActivityState();
 
         //Click pause again
         onView(withId(R.id.pauseButton)).perform(click());
-        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertNotEquals("00:10:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
+        validatePausedActivityState();
         String timerValueOnSecondPause = (String) textView.getText();
         int progressBarMaxOnSecondPause = circularProgressIndicator.getMax();
         int progressBarProgressOnSecondPause = circularProgressIndicator.getProgress();
         Assert.assertTrue(progressBarProgressOnSecondPause < progressBarProgressOnPause);
-
         //Wait 1s to check if timer is actually stopped
         Thread.sleep(2000);
         Assert.assertEquals(timerValueOnSecondPause, textView.getText());
@@ -207,14 +163,7 @@ public class TimerActivityTests {
         //Cllick play and wait for timer to be finished
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(10000);
-        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertEquals("00:00:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertEquals(0, circularProgressIndicator.getProgress());
+        validateFinishedActivityState();
         scenario.close();
     }
 
@@ -224,6 +173,8 @@ public class TimerActivityTests {
      * When user press 'play' button and waits 2s
      * And user press 'pause'
      * And user press 'reset'
+     * Then confirm dialog should be displayed
+     * When user confirms choice in dialog
      * Then following elements are displayed:
      * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
      * | Time Progress Bar | VISIBLE    |          |10000 | 10000    |
@@ -235,6 +186,8 @@ public class TimerActivityTests {
      * When user press 'play' button and until timer is finished
      * And user dismiss timeout dialog
      * And user press 'reset'
+     * Then confirm dialog should be displayed
+     * When user confirms choice in dialog
      * Then following elements are displayed:
      * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
      * | Time Progress Bar | VISIBLE    |          |10000 | 10000    |
@@ -245,43 +198,39 @@ public class TimerActivityTests {
      * | Time TextView     | VISIBLE    | 00:10:00 |      |          |
      */
     @Test
-    public void timer_should_be_reset_when_reset_button_is_pressed() throws InterruptedException {
+    public void timer_should_be_reset_when_reset_button_is_pressed_and_choice_is_confirmed() throws InterruptedException {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         initializeView(scenario);
+        validateDefaultActivityState();
         //Click start and wait 2s
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(2000);
+        validateInProgressActivityState();
         onView(withId(R.id.pauseButton)).perform(click());
+        validatePausedActivityState();
 
         //Click reset when paused
         onView(withId(R.id.resetButton)).perform(click());
-        Assert.assertEquals(View.VISIBLE, circularProgressIndicator.getVisibility());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertEquals(10000, circularProgressIndicator.getProgress());
-        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertEquals("00:10:00", textView.getText());
+        //Validate if dialog is displayed
+        validateConfirmResetDialog();
+        //Accept dialog
+        onView(withText(R.string.dialog_positive_yes_button)).perform(click());
+        validateConfirmResetDialogIsGone();
+        validateDefaultActivityState();
 
         //Click play and wait for timer to be finished
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(10000);
-
         //Close timeout dialog
-        onView(withText(R.string.timeout_dialog_positive_button)).perform(click());
+        onView(withText(R.string.dialog_positive_ok_button)).perform(click());
         //Click reset when finished
         onView(withId(R.id.resetButton)).perform(click());
-        Assert.assertEquals(View.VISIBLE, circularProgressIndicator.getVisibility());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertEquals(10000, circularProgressIndicator.getProgress());
-        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertEquals("00:10:00", textView.getText());
+        //Validate if dialog is displayed
+        validateConfirmResetDialog();
+        //Accept dialog
+        onView(withText(R.string.dialog_positive_yes_button)).perform(click());
+        validateConfirmResetDialogIsGone();
+        validateDefaultActivityState();
     }
 
     /**
@@ -298,17 +247,35 @@ public class TimerActivityTests {
         initializeView(scenario);
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(10000);
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_title));
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_message));
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_positive_button));
-        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_title));
-        onView(withText(R.string.timeout_dialog_positive_button)).perform(click());
-
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_title));
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_message));
-        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_positive_button));
+        validateTimeoutDialog();
+        onView(withText(R.string.dialog_positive_ok_button)).perform(click());
+        validateTimeoutDialogIsGone();
     }
 
+    @Test
+    public void reset_dialog_should_be_dismissed_when_no_is_clicked_and_timer_should_not_be_reset() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        initializeView(scenario);
+        onView(withId(R.id.playButton)).perform(click());
+        Thread.sleep(2000);
+        onView(withId(R.id.pauseButton)).perform(click());
+        onView(withId(R.id.resetButton)).perform(click());
+        validateConfirmResetDialog();
+        onView(withText(R.string.dialog_negative_button)).perform(click());
+        validateConfirmResetDialogIsGone();
+        validatePausedActivityState();
+        //continue and reset when finished
+        onView(withId(R.id.playButton)).perform(click());
+        Thread.sleep(10000);
+        onView(withText(R.string.dialog_positive_ok_button)).perform(click());
+        onView(withId(R.id.resetButton)).perform(click());
+        validateConfirmResetDialog();
+        onView(withText(R.string.dialog_negative_button)).perform(click());
+        validateConfirmResetDialogIsGone();
+        validateFinishedActivityState();
+    }
+
+    //-----------------TEST UTILS---------------------------------------
     private <T extends Activity> void initializeView(ActivityScenario<T> scenario) {
         scenario.onActivity(activity -> {
             textView = activity.findViewById(R.id.timeTextView);
@@ -319,5 +286,76 @@ public class TimerActivityTests {
             doneButton = activity.findViewById(R.id.doneButton);
         });
 
+    }
+
+    public void validateDefaultActivityState(){
+        Assert.assertEquals(View.VISIBLE, circularProgressIndicator.getVisibility());
+        Assert.assertEquals(10000, circularProgressIndicator.getMax());
+        Assert.assertEquals(10000, circularProgressIndicator.getProgress());
+        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
+        Assert.assertEquals("00:10:00", textView.getText());
+    }
+
+    public void validateInProgressActivityState(){
+        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, pauseButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
+        Assert.assertNotEquals("00:10:00", textView.getText());
+        Assert.assertEquals(10000, circularProgressIndicator.getMax());
+        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
+    }
+
+    public void validateFinishedActivityState(){
+        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
+        Assert.assertEquals("00:00:00", textView.getText());
+        Assert.assertEquals(10000, circularProgressIndicator.getMax());
+        Assert.assertEquals(0, circularProgressIndicator.getProgress());
+    }
+
+    public void validatePausedActivityState(){
+        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
+        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
+        Assert.assertNotEquals("00:10:00", textView.getText());
+        Assert.assertEquals(10000, circularProgressIndicator.getMax());
+        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
+    }
+
+    public void validateConfirmResetDialog(){
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.confirm_reset_dialog_message));
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.dialog_negative_button));
+    }
+
+    public void validateConfirmResetDialogIsGone(){
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.confirm_dialog_title));
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.confirm_reset_dialog_message));
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.dialog_positive_yes_button));
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.dialog_negative_button));
+    }
+
+    public void validateTimeoutDialog(){
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_title));
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_message));
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.dialog_positive_ok_button));
+    }
+
+    public void validateTimeoutDialogIsGone(){
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_title));
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_message));
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.dialog_positive_ok_button));
     }
 }

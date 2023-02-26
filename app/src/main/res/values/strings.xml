@@ -6,9 +6,15 @@
     <string name="done_button">Done Button</string>
     <string name="default_timer_value">02:00:00</string>
 
-<!--Time Out Dialog Resources-->
+    <!--Common Dialog Resources-->
+    <string name="dialog_positive_ok_button">OK</string>
+    <string name="dialog_positive_yes_button">TAK</string>
+    <string name="dialog_negative_button">NIE</string>
+    <string name="confirm_dialog_title">Potwierdzenie</string>
+    <!--Time Out Dialog Resources-->
     <string name="timeout_dialog_title">Koniec czasu</string>
     <string name="timeout_dialog_message">Czas próby upłynął</string>
-    <string name="timeout_dialog_positive_button">OK</string>
+    <!--Confirm reset Dialog Resources-->
+    <string name="confirm_reset_dialog_message">Czy na pewno chcesz zresetować timer?</string>
 
 </resources>
