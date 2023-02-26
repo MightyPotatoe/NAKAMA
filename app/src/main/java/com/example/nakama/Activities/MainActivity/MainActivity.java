@@ -104,16 +104,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void onResetButtonClick(View view) {
         Log.v("ACTIVITY DEBUG:", "Reset button pressed");
-        //Initialize default view
-        viewManager.setViewToDefaultState(DEFAULT_TIMER_VALUE);
+        showConfirmResetDialog();
     }
 
     public void showTimeUpDialog() {
         new MaterialAlertDialogBuilder(MainActivity.this)
                 .setTitle(R.string.timeout_dialog_title)
                 .setMessage(R.string.timeout_dialog_message)
-                .setPositiveButton(R.string.timeout_dialog_positive_button, (dialogInterface, i) -> {
+                .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
                 })
+                .show();
+    }
+
+    public void showConfirmResetDialog() {
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle(R.string.confirm_dialog_title)
+                .setMessage(R.string.confirm_reset_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> viewManager.setViewToDefaultState(DEFAULT_TIMER_VALUE))
+                .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
     }
 }
