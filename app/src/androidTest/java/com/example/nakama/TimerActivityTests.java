@@ -73,6 +73,7 @@ public class TimerActivityTests {
         Assert.assertEquals("00:10:00", textView.getText());
 
         onView(withId(R.id.playButton)).perform(click());
+        Thread.sleep(1000);
         Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
         Assert.assertEquals(View.VISIBLE, pauseButton.getVisibility());
         Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());

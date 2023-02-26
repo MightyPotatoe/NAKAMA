@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
 
     private final int DEFAULT_TIMER_VALUE = 10000;
-    private final int POLLING_FREQUENCY = 1000;
+    private final int POLLING_FREQUENCY = 500;
     TextView timerTextView;
     CircularProgressIndicator circularProgressIndicator;
     private Intent timerServiceIntent;
