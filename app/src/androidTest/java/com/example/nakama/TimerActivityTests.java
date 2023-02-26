@@ -3,6 +3,7 @@ package com.example.nakama;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.app.Activity;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.nakama.Activities.MainActivity.MainActivity;
+import com.example.nakama.Utils.Validate;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import org.junit.Assert;
@@ -231,6 +233,7 @@ public class TimerActivityTests {
      * | Done button       | INVISIBLE  |          |      |          |
      * | Time TextView     | VISIBLE    | 00:10:00 |      |          |
      * When user press 'play' button and until timer is finished
+     * And user dismiss timeout dialog
      * And user press 'reset'
      * Then following elements are displayed:
      * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
@@ -266,6 +269,8 @@ public class TimerActivityTests {
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(10000);
 
+        //Close timeout dialog
+        onView(withText(R.string.timeout_dialog_positive_button)).perform(click());
         //Click reset when finished
         onView(withId(R.id.resetButton)).perform(click());
         Assert.assertEquals(View.VISIBLE, circularProgressIndicator.getVisibility());
@@ -277,6 +282,31 @@ public class TimerActivityTests {
         Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
         Assert.assertEquals(View.VISIBLE, textView.getVisibility());
         Assert.assertEquals("00:10:00", textView.getText());
+    }
+
+    /**
+     * Given user is on MainActivity
+     * And timer is set to 10 seconds
+     * When user press 'play' button and waits until timer is finished
+     * Then timeout dialog is displayed
+     * When user clicks dialog accept button
+     * Then timeout dialog is closed displayed
+     */
+    @Test
+    public void dialogShouldBeDisplayedWhenTimerIsFinished() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        initializeView(scenario);
+        onView(withId(R.id.playButton)).perform(click());
+        Thread.sleep(10000);
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_title));
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_message));
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_positive_button));
+        Assert.assertTrue(Validate.isElementDisplayed(R.string.timeout_dialog_title));
+        onView(withText(R.string.timeout_dialog_positive_button)).perform(click());
+
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_title));
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_message));
+        Assert.assertFalse(Validate.isElementDisplayed(R.string.timeout_dialog_positive_button));
     }
 
     private <T extends Activity> void initializeView(ActivityScenario<T> scenario) {

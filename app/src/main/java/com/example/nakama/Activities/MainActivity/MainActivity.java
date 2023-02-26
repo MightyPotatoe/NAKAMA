@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.nakama.R;
 import com.example.nakama.Services.TimerService;
 import com.example.nakama.Utils.Converter;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
-        viewManager = new MainActivityViewManager(this);
+        viewManager = new MainActivityViewManager(MainActivity.this);
 
         //Registering Broadcast Receiver for BrewingServiceMessages
         timerServiceIntent = new Intent(this, TimerService.class);
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
             viewManager.setTimerCurrentTime(timeLeft);
             if(timeLeft == 0){
                 viewManager.setViewToFinishedState();
+                showTimeUpDialog();
             }
         }
     };
@@ -104,5 +106,14 @@ public class MainActivity extends AppCompatActivity {
         Log.v("ACTIVITY DEBUG:", "Reset button pressed");
         //Initialize default view
         viewManager.setViewToDefaultState(DEFAULT_TIMER_VALUE);
+    }
+
+    public void showTimeUpDialog() {
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle(R.string.timeout_dialog_title)
+                .setMessage(R.string.timeout_dialog_message)
+                .setPositiveButton(R.string.timeout_dialog_positive_button, (dialogInterface, i) -> {
+                })
+                .show();
     }
 }
