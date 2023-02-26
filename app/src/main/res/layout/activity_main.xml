@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.MainActivity">
+    tools:context=".Activities.MainActivity.MainActivity">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/timeTextView"
@@ -75,7 +75,8 @@
         app:layout_constraintEnd_toStartOf="@+id/playButton"
         app:layout_constraintTop_toTopOf="@+id/playButton"
         android:visibility="invisible"
-        android:contentDescription="@string/reset_button" />
+        android:contentDescription="@string/reset_button"
+        android:onClick="onResetButtonClick"/>
 
     <ImageButton
         android:id="@+id/doneButton"

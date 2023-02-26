@@ -1,4 +1,4 @@
-package com.example.nakama.Activities;
+package com.example.nakama.Activities.MainActivity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,25 +9,18 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.R;
 import com.example.nakama.Services.TimerService;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
-
-import org.apache.commons.lang3.time.DurationFormatUtils;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.example.nakama.Utils.Converter;
 
 public class MainActivity extends AppCompatActivity {
 
     private final int DEFAULT_TIMER_VALUE = 10000;
-    private final int POLLING_FREQUENCY = 500;
-    TextView timerTextView;
-    CircularProgressIndicator circularProgressIndicator;
+
+    MainActivityViewManager viewManager;
     private Intent timerServiceIntent;
     PowerManager.WakeLock wakeLock;
     PowerManager powerManager;
@@ -37,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
+        viewManager = new MainActivityViewManager(this);
 
         //Registering Broadcast Receiver for BrewingServiceMessages
         timerServiceIntent = new Intent(this, TimerService.class);
@@ -46,12 +40,8 @@ public class MainActivity extends AppCompatActivity {
         powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelog");
         wakeLock.acquire(15*60*1000L /*15 minutes*/);
-
         //Initialize default view
-        timerTextView = findViewById(R.id.timeTextView);
-        circularProgressIndicator = findViewById(R.id.timeProgressBar);
-        circularProgressIndicator.setMax(DEFAULT_TIMER_VALUE);
-        updateTimer(DEFAULT_TIMER_VALUE);
+        viewManager.setViewToDefaultState(DEFAULT_TIMER_VALUE);
     }
 
     @Override
@@ -71,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         wakeLock.release();
     }
 
+    //----------------------------------------------------BROADCAST RECEIVER--------------------------------------------------------------------
 
     /**
      * On receive broadcast from brewingService
@@ -80,58 +71,38 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             //get BROADCAST_TIMER_VALUE from broadcast and process it
             long timeLeft = intent.getLongExtra(TimerService.BROADCAST_TIMER_VALUE, DEFAULT_TIMER_VALUE);
-            updateTimer(timeLeft);
+            viewManager.setTimerCurrentTime(timeLeft);
             if(timeLeft == 0){
-                findViewById(R.id.pauseButton).setVisibility(View.INVISIBLE);
-                findViewById(R.id.resetButton).setVisibility(View.VISIBLE);
-                findViewById(R.id.doneButton).setVisibility(View.VISIBLE);
+                viewManager.setViewToFinishedState();
             }
         }
     };
 
-    public void updateTimer(long timeRemain){
-        circularProgressIndicator.setProgress((int)timeRemain);
-        String timeLeft = DurationFormatUtils.formatDuration(timeRemain, "mm:ss:SS", true);
-        circularProgressIndicator.setProgress((int)timeRemain);
-        Pattern pattern = Pattern.compile("\\d{2}:\\d{2}:\\d{2}");
-        Matcher matcher = pattern.matcher(timeLeft);
-        if (matcher.find()) {timerTextView.setText(matcher.group(0));}
-    }
-
     //----------------------------------------------------BUTTONS ACTIONS--------------------------------------------------------------------
     public void onPlayButtonClick(View view) {
+        int POLLING_FREQUENCY = 500;
 
         Log.v("ACTIVITY DEBUG:", "Play button pressed");
         if(!TimerService.isServiceRunning){
             Log.v("ACTIVITY DEBUG:", "Attempting to start service");
             //Get time from textField
-            timerServiceIntent.putExtra(TimerService.TIME, getTimerValueInMillis());
+            timerServiceIntent.putExtra(TimerService.TIME, Converter.getMillisFromString((String) viewManager.getTimerTextView().getText()));
             timerServiceIntent.putExtra(TimerService.POLLING_FREQUENCY, POLLING_FREQUENCY);
             this.startService(timerServiceIntent);
         }
-        findViewById(R.id.playButton).setVisibility(View.INVISIBLE);
-        findViewById(R.id.resetButton).setVisibility(View.INVISIBLE);
-        findViewById(R.id.doneButton).setVisibility(View.INVISIBLE);
-        findViewById(R.id.pauseButton).setVisibility(View.VISIBLE);
+        viewManager.setViewToPlayedState();
     }
 
     public void onPauseButtonClick(View view) {
         Log.v("ACTIVITY DEBUG:", "Pause button pressed");
         TimerService.pauseTimer();
         this.stopService(timerServiceIntent);
-        findViewById(R.id.pauseButton).setVisibility(View.INVISIBLE);
-        findViewById(R.id.playButton).setVisibility(View.VISIBLE);
-        findViewById(R.id.resetButton).setVisibility(View.VISIBLE);
-        findViewById(R.id.doneButton).setVisibility(View.VISIBLE);
+        viewManager.setViewToPausedState();
     }
 
-    public int getTimerValueInMillis(){
-        TextView timerTextView = findViewById(R.id.timeTextView);
-        String timerText = (String) timerTextView.getText();
-        String[] timerTextSplit = timerText.split(":");
-        int timerInMillis = Integer.parseInt(timerTextSplit[0]) * 60 * 1000;
-        timerInMillis += Integer.parseInt(timerTextSplit[1]) * 1000;
-        timerInMillis += Integer.parseInt(timerTextSplit[2]) * 10;
-        return timerInMillis;
+    public void onResetButtonClick(View view) {
+        Log.v("ACTIVITY DEBUG:", "Reset button pressed");
+        //Initialize default view
+        viewManager.setViewToDefaultState(DEFAULT_TIMER_VALUE);
     }
 }
