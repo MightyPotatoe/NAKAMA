@@ -61,4 +61,7 @@
     <color name="md_theme_dark_surfaceTint">#AAC7FF</color>
     <color name="md_theme_dark_outlineVariant">#44474E</color>
     <color name="md_theme_dark_scrim">#000000</color>
+
+    <color name="advanced_difficulty_color">#0387C6</color>
+    <color name="basic_difficulty_color">#17AF8A</color>
 </resources>
