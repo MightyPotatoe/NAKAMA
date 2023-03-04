@@ -1,69 +1,66 @@
 package com.example.nakama.Activities.MainActivity;
 
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.R;
-import com.example.nakama.Utils.Converter;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 public class MainActivityViewManager {
 
+    private final AppCompatActivity activity;
+    TextView basicLevelCardTitle;
+    TextView basicLevelCardDescription;
+
+    public Button getBasicLevelButton() {
+        return basicLevelButton;
+    }
+
+    public Button getAdvancedLevelButton() {
+        return advancedLevelButton;
+    }
+
+    Button basicLevelButton;
+    ImageView basicLevelImage;
+
+    TextView advancedLevelCardTitle;
+    TextView advancedLevelCardDescription;
+    Button advancedLevelButton;
+    ImageView advancedLevelImage;
+
+
+
     public MainActivityViewManager(AppCompatActivity activity) {
-        this.timerTextView = activity.findViewById(R.id.timeTextView);
-        timerProgressBar = activity.findViewById(R.id.timeProgressBar);
-        playButton = activity.findViewById(R.id.playButton);
-        pauseButton = activity.findViewById(R.id.pauseButton);
-        resetButton = activity.findViewById(R.id.resetButton);
-        doneButton = activity.findViewById(R.id.doneButton);
+        this.activity = activity;
+
+        View basicLevelCardView = activity.findViewById(R.id.basicLevelCardView);
+        View advancedLevelCardView = activity.findViewById(R.id.advancedLevelCardView);
+
+        basicLevelCardTitle = basicLevelCardView.findViewById(R.id.difficultySelectionCardHeadline);
+        basicLevelCardDescription = basicLevelCardView.findViewById(R.id.difficultySelectionCardDescription);
+        basicLevelButton = basicLevelCardView.findViewById(R.id.difficultySelectionCardButton);
+        basicLevelImage = basicLevelCardView.findViewById(R.id.difficultySelectionCardImage);
+
+        advancedLevelCardTitle = advancedLevelCardView.findViewById(R.id.difficultySelectionCardHeadline);
+        advancedLevelCardDescription = advancedLevelCardView.findViewById(R.id.difficultySelectionCardDescription);
+        advancedLevelButton = advancedLevelCardView.findViewById(R.id.difficultySelectionCardButton);
+        advancedLevelImage = advancedLevelCardView.findViewById(R.id.difficultySelectionCardImage);
     }
 
-    private final TextView timerTextView;
-    private final CircularProgressIndicator timerProgressBar;
-    private final ImageButton playButton;
-    private final ImageButton pauseButton;
-    private final ImageButton resetButton;
-    private final ImageButton doneButton;
+    public void setCardsDefaultContent(){
+        basicLevelCardTitle.setText(R.string.basic_level_title);
+        basicLevelCardDescription.setText(R.string.basic_level_description);
+        basicLevelImage.setBackgroundColor(activity.getResources().getColor(R.color.basic_difficulty_color));
+        basicLevelImage.setImageDrawable(activity.getResources().getDrawable(R.drawable.basic_level_icon));
+        basicLevelButton.setBackgroundColor(activity.getResources().getColor(R.color.basic_difficulty_color));
 
-    public TextView getTimerTextView() {
-        return timerTextView;
-    }
-    public void setViewToDefaultState(int timeInMillis){
-        //Initialize default view
-        timerProgressBar.setMax(timeInMillis);
-        setTimerCurrentTime(timeInMillis);
-        playButton.setVisibility(View.VISIBLE);
-        pauseButton.setVisibility(View.INVISIBLE);
-        resetButton.setVisibility(View.INVISIBLE);
-        doneButton.setVisibility(View.INVISIBLE);
-    }
-
-    public void setTimerCurrentTime(long timeRemain){
-        timerProgressBar.setProgress((int)timeRemain);
-        timerTextView.setText(Converter.millisToString(timeRemain));
-    }
-
-    public void setViewToPlayedState(){
-        playButton.setVisibility(View.INVISIBLE);
-        pauseButton.setVisibility(View.VISIBLE);
-        resetButton.setVisibility(View.INVISIBLE);
-        doneButton.setVisibility(View.INVISIBLE);
-    }
-
-    public void setViewToPausedState(){
-        playButton.setVisibility(View.VISIBLE);
-        pauseButton.setVisibility(View.INVISIBLE);
-        resetButton.setVisibility(View.VISIBLE);
-        doneButton.setVisibility(View.VISIBLE);
-    }
-
-    public void setViewToFinishedState(){
-        playButton.setVisibility(View.INVISIBLE);
-        pauseButton.setVisibility(View.INVISIBLE);
-        resetButton.setVisibility(View.VISIBLE);
-        doneButton.setVisibility(View.VISIBLE);
+        advancedLevelCardTitle.setText(R.string.advanced_level_title);
+        advancedLevelCardDescription.setText(R.string.advanced_level_description);
+        advancedLevelImage.setBackgroundColor(activity.getResources().getColor(R.color.advanced_difficulty_color));
+        advancedLevelImage.setImageDrawable(activity.getResources().getDrawable(R.drawable.advanced_level_icon));
+        advancedLevelButton.setBackgroundColor(activity.getResources().getColor(R.color.advanced_difficulty_color));
     }
 }

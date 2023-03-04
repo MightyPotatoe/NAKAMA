@@ -2,10 +2,13 @@ package com.example.nakama;
 
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import android.content.Context;
+
 import androidx.test.core.app.ActivityScenario;
 
 import com.example.nakama.Activities.AttemptSummaryActivity.AttemptSummaryActivity;
-import com.example.nakama.Activities.MainActivity.MainActivity;
+import com.example.nakama.Activities.TimerActivity.TimerActivity;
+import com.example.nakama.SharedPreferences.AppPreferences;
 import com.example.nakama.Utils.Action;
 import com.example.nakama.Utils.Converter;
 import com.example.nakama.Utils.Validate;
@@ -15,6 +18,16 @@ import org.junit.Test;
 
 public class AttemptSummaryActivityTests {
 
+    public ActivityScenario<TimerActivity> setTimerActivityScenario(){
+        ActivityScenario<TimerActivity> scenario = ActivityScenario.launch(TimerActivity.class);
+        scenario.onActivity(activity -> {
+            AppPreferences appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
+            appPreferences.setPollingFrequency(500);
+            appPreferences.setRingTime(10000);
+        });
+        scenario.recreate();
+        return scenario;
+    }
 
     /**
      * When user starts timer (value 10000)
@@ -28,7 +41,7 @@ public class AttemptSummaryActivityTests {
      */
     @Test
     public void max_score_should_be_obtained_when_timer_is_not_exceed() throws InterruptedException {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<TimerActivity> scenario = setTimerActivityScenario();
         Action.clickById(R.id.playButton);
         Thread.sleep(2000);
         Action.clickById(R.id.pauseButton);
@@ -56,7 +69,7 @@ public class AttemptSummaryActivityTests {
      */
     @Test
     public void zero_score_should_be_obtained_when_timer_is_exceed() throws InterruptedException {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<TimerActivity> scenario = setTimerActivityScenario();
         Action.clickById(R.id.playButton);
         Thread.sleep(10000);
 
@@ -79,10 +92,11 @@ public class AttemptSummaryActivityTests {
     @Test
     public void clicking_next_butto_should_start_new_timer() {
         ActivityScenario<AttemptSummaryActivity> scenario = ActivityScenario.launch(AttemptSummaryActivity.class);
-        Action.clickById(R.id.nextCompetitorButton);
-        Validate.isElementDisplayedByText(R.string.confirm_new_attempt_dialog_message);
+        Action.clickById(R.id.difficultySelectionCardButton);
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.confirm_new_attempt_dialog_message));
         Action.clickByText(R.string.dialog_positive_yes_button);
-        Validate.isElementDisplayedById(R.id.timeProgressBar);
+        Assert.assertTrue(Validate.isElementDisplayedById(R.id.timeProgressBar));
+        scenario.close();
     }
 
     /**
@@ -95,9 +109,10 @@ public class AttemptSummaryActivityTests {
     @Test
     public void clicking_cancel_on_confirm_new_attempt() {
         ActivityScenario<AttemptSummaryActivity> scenario = ActivityScenario.launch(AttemptSummaryActivity.class);
-        Action.clickById(R.id.nextCompetitorButton);
-        Validate.isElementDisplayedByText(R.string.confirm_new_attempt_dialog_message);
+        Action.clickById(R.id.difficultySelectionCardButton);
+        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.confirm_new_attempt_dialog_message));
         Action.clickByText(R.string.dialog_negative_button);
-        Validate.isElementDisplayedById(R.id.summaryPointsValue);
+        Assert.assertTrue(Validate.isElementDisplayedById(R.id.summaryPointsValue));
+        scenario.close();
     }
 }

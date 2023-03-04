@@ -24,4 +24,11 @@
     <string name="time_of_attempt_label">Czas podejścia:</string>
     <string name="next_competitior_button_label">Następny zawodnik</string>
 
+    <!--Main Activity Resources-->
+    <string name="basic_level_title">Podstawowy</string>
+    <string name="basic_level_description">2:00 min czasu przeszukania </string>
+    <string name="advanced_level_title">Zaawansowany</string>
+    <string name="advanced_level_description">4:00 min czasu przeszukania </string>
+    <string name="button_begin">Rozpocznij</string>
+
 </resources>

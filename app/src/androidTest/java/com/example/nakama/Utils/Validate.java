@@ -20,6 +20,17 @@ public class Validate {
         }
     }
 
+    public static boolean isElementInDialogDisplayedByText(int byStringResourceId){
+        try{
+            onView(withText(byStringResourceId)).check(matches(isDisplayed()));
+//            onView(withText(byStringResourceId)).inRoot(isDialog()).check(matches(isDisplayed()));
+            return true;
+        }
+        catch (NoMatchingViewException e){
+            return false;
+        }
+    }
+
     public static boolean isElementDisplayedById(int byStringResourceId){
         try{
             onView(withId(byStringResourceId)).check(matches(isDisplayed()));

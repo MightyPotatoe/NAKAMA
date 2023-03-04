@@ -6,6 +6,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -13,7 +14,8 @@ import android.widget.TextView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.example.nakama.Activities.MainActivity.MainActivity;
+import com.example.nakama.Activities.TimerActivity.TimerActivity;
+import com.example.nakama.SharedPreferences.AppPreferences;
 import com.example.nakama.Utils.Validate;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -30,6 +32,18 @@ public class TimerActivityTests {
     ImageButton pauseButton;
     ImageButton restartButton;
     ImageButton doneButton;
+    ActivityScenario<TimerActivity> scenario;
+    void beforeMethod(){
+        scenario = ActivityScenario.launch(TimerActivity.class);
+        scenario.onActivity(activity -> {
+            AppPreferences appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
+            appPreferences.setPollingFrequency(500);
+            appPreferences.setRingTime(10000);
+        });
+        scenario.recreate();
+        initializeView(scenario);
+    }
+
 
     /**
      * Given user is on MainActivity
@@ -62,8 +76,7 @@ public class TimerActivityTests {
      */
     @Test
     public void timer_activity_should_display_play_button_on_launch() throws InterruptedException {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        initializeView(scenario);
+        beforeMethod();
         validateDefaultActivityState();
 
         onView(withId(R.id.playButton)).perform(click());
@@ -123,8 +136,7 @@ public class TimerActivityTests {
      */
     @Test
     public void timer_activity_should_pause_and_continue() throws InterruptedException {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        initializeView(scenario);
+        beforeMethod();
         //Click start and wait 2s
         validateDefaultActivityState();
         onView(withId(R.id.playButton)).perform(click());
@@ -199,8 +211,7 @@ public class TimerActivityTests {
      */
     @Test
     public void timer_should_be_reset_when_reset_button_is_pressed_and_choice_is_confirmed() throws InterruptedException {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        initializeView(scenario);
+        beforeMethod();
         validateDefaultActivityState();
         //Click start and wait 2s
         onView(withId(R.id.playButton)).perform(click());
@@ -243,8 +254,7 @@ public class TimerActivityTests {
      */
     @Test
     public void dialogShouldBeDisplayedWhenTimerIsFinished() throws InterruptedException {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        initializeView(scenario);
+        beforeMethod();
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(10000);
         validateTimeoutDialog();
@@ -254,8 +264,7 @@ public class TimerActivityTests {
 
     @Test
     public void reset_dialog_should_be_dismissed_when_no_is_clicked_and_timer_should_not_be_reset() throws InterruptedException {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        initializeView(scenario);
+        beforeMethod();
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(2000);
         onView(withId(R.id.pauseButton)).perform(click());
@@ -334,36 +343,36 @@ public class TimerActivityTests {
     }
 
     public void validateConfirmResetDialog(){
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.confirm_dialog_title));
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.confirm_reset_dialog_message));
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.dialog_positive_yes_button));
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.dialog_negative_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_reset_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
     }
 
     public void validateConfirmResetDialogIsGone(){
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.confirm_dialog_title));
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.confirm_reset_dialog_message));
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_positive_yes_button));
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_negative_button));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_reset_dialog_message));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
     }
 
     public void validateTimeoutDialog(){
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.timeout_dialog_title));
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.timeout_dialog_message));
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.dialog_positive_ok_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
     }
 
     public void validateTimeoutDialogIsGone(){
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.timeout_dialog_title));
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.timeout_dialog_message));
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_positive_ok_button));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_title));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_message));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
     }
 
     public void validateConfirmAttemptDialogIsGone(){
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.confirm_dialog_title));
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.confirm_attempt_dialog_message));
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_positive_yes_button));
-        Assert.assertFalse(Validate.isElementDisplayedByText(R.string.dialog_negative_button));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_attempt_dialog_message));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
 
     }
 }
