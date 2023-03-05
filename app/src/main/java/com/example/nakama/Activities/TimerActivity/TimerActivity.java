@@ -13,10 +13,13 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.Activities.AttemptSummaryActivity.AttemptSummaryActivity;
+import com.example.nakama.DataBase.AppDatabase;
+import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
 import com.example.nakama.Services.TimerService;
 import com.example.nakama.SharedPreferences.AppPreferences;
 import com.example.nakama.Utils.Converter;
+import com.example.nakama.Utils.Dictionary;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class TimerActivity extends AppCompatActivity {
@@ -29,13 +32,29 @@ public class TimerActivity extends AppCompatActivity {
     PowerManager powerManager;
     AppPreferences appPreferences;
 
+    Users user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        appPreferences = new AppPreferences(getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
+        switch (appPreferences.getDifficulty()){
+            case Dictionary.Difficulty.BASIC:
+                setTheme(R.style.Theme_NAKAMA_BasicLevelTheme);
+                break;
+            case Dictionary.Difficulty.ADVANCED:
+                setTheme(R.style.Theme_NAKAMA_AdvancedLevelTheme);
+                break;
+        }
+
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_timer);
         viewManager = new TimerActivityViewManager(TimerActivity.this);
-        appPreferences = new AppPreferences(getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
+
+        //Get current user from db
+        AppDatabase db = AppDatabase.getInstance(this);
+        user = db.getUser(appPreferences.getUserId());
+        //Create or reset current user record for this ring
 
         //Registering Broadcast Receiver for BrewingServiceMessages
         timerServiceIntent = new Intent(this, TimerService.class);
@@ -46,7 +65,11 @@ public class TimerActivity extends AppCompatActivity {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelog");
         wakeLock.acquire(15*60*1000L /*15 minutes*/);
         //Initialize default view
-        viewManager.setViewToDefaultState(appPreferences.getRingTime());
+        viewManager.setViewToDefaultState(
+                appPreferences.getRingTime(),
+                appPreferences.getDifficulty(),
+                appPreferences.getActiveRing(),
+                user);
     }
 
     @Override
@@ -127,7 +150,11 @@ public class TimerActivity extends AppCompatActivity {
         new MaterialAlertDialogBuilder(TimerActivity.this)
                 .setTitle(R.string.confirm_dialog_title)
                 .setMessage(R.string.confirm_reset_dialog_message)
-                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> viewManager.setViewToDefaultState(appPreferences.getRingTime()))
+                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> viewManager.setViewToDefaultState(
+                        appPreferences.getRingTime(),
+                        appPreferences.getDifficulty(),
+                        appPreferences.getActiveRing(),
+                        user))
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
     }
