@@ -30,5 +30,13 @@
     <string name="advanced_level_title">Zaawansowany</string>
     <string name="advanced_level_description">4:00 min czasu przeszukania </string>
     <string name="button_begin">Rozpocznij</string>
+    <string name="false_alarm_label">Fałszywe alarmy:</string>
+    <string name="defecation_label">Defekacje na ringu:</string>
+    <string name="dropped_treat_label">Upuszczone smaczki:</string>
+    <string name="actual_score_label">Aktualny wynik:</string>
+    <string name="false_alarm_floating_button">false_alarm_floating_button</string>
+    <string name="dropped_treat_button">Upuszczenie smaczka</string>
+    <string name="defecation_button">Defekacja</string>
+    <string name="disqualification_button">Dyskwalifikacja</string>
 
 </resources>

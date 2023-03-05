@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/timerContainer"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="?attr/theme"
+    android:id="@+id/timerContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="?attr/theme"
     tools:context=".Activities.TimerActivity.TimerActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -65,31 +65,185 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/timeTextView"
-        style="@style/TextAppearance.Material3.DisplayMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/default_timer_value"
-        app:layout_constraintBottom_toBottomOf="@+id/timeProgressBar"
-        app:layout_constraintEnd_toEndOf="@+id/timeProgressBar"
-        app:layout_constraintStart_toStartOf="@+id/timeProgressBar"
-        app:layout_constraintTop_toTopOf="@+id/timeProgressBar" />
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/timeProgressBar"
-        android:layout_width="280dp"
-        android:layout_height="502dp"
-        android:progress="85"
-        app:indicatorSize="280dp"
-        app:layout_constraintBottom_toTopOf="@+id/playButton"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView"
+        style="@style/Widget.Material3.CardView.Elevated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timerTopBarLayout"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:trackColor="@color/md_theme_light_surfaceVariant"
-        app:trackThickness="24dp" />
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/timeTextView"
+                    style="@style/TextAppearance.Material3.TitleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_timer_value"
+                    app:layout_constraintBottom_toBottomOf="@+id/timeProgressBar"
+                    app:layout_constraintEnd_toEndOf="@+id/timeProgressBar"
+                    app:layout_constraintStart_toStartOf="@+id/timeProgressBar"
+                    app:layout_constraintTop_toTopOf="@+id/timeProgressBar" />
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/timeProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:progress="85"
+                    app:indicatorSize="160dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:trackColor="@color/md_theme_light_surfaceVariant"
+                    app:trackThickness="16dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TableLayout
+                    android:id="@+id/tableLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+                    <TableRow>
+
+                        <com.google.android.material.textview.MaterialTextView
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/false_alarm_label"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/timerFalseAlarmCounter"
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/app_name" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <com.google.android.material.textview.MaterialTextView
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/defecation_label"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/timerDefecationCounter"
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/app_name" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <com.google.android.material.textview.MaterialTextView
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/dropped_treat_label"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/timerDroppedTreatsCounter"
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/app_name" />
+                    </TableRow>
+
+                </TableLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@+id/tableLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/timerScoreLabel"
+                        style="@style/TextAppearance.Material3.TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/actual_score_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/timerScore"
+                        style="@style/TextAppearance.Material3.TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/app_name"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/timerScoreLabel" />
+
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <ImageButton
         android:id="@+id/playButton"
@@ -97,29 +251,29 @@
         android:layout_height="120dp"
         android:layout_marginBottom="32dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/play_button"
+        android:onClick="onPlayButtonClick"
         android:scaleType="fitStart"
         android:src="@drawable/outline_play_circle_filled_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="@string/play_button"
-        android:onClick="onPlayButtonClick"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/pauseButton"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/pause_button"
+        android:onClick="onPauseButtonClick"
         android:scaleType="fitStart"
         android:src="@drawable/round_pause_circle_filled_24"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/playButton"
         app:layout_constraintEnd_toEndOf="@+id/playButton"
         app:layout_constraintStart_toStartOf="@+id/playButton"
-        app:layout_constraintTop_toTopOf="@+id/playButton"
-        android:contentDescription="@string/pause_button"
-        android:onClick="onPauseButtonClick"/>
+        app:layout_constraintTop_toTopOf="@+id/playButton" />
 
     <ImageButton
         android:id="@+id/resetButton"
@@ -127,14 +281,14 @@
         android:layout_height="72dp"
         android:layout_marginEnd="8dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/reset_button"
+        android:onClick="onResetButtonClick"
         android:scaleType="fitStart"
         android:src="@drawable/outline_replay_circle_filled_24"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/playButton"
         app:layout_constraintEnd_toStartOf="@+id/playButton"
-        app:layout_constraintTop_toTopOf="@+id/playButton"
-        android:visibility="invisible"
-        android:contentDescription="@string/reset_button"
-        android:onClick="onResetButtonClick"/>
+        app:layout_constraintTop_toTopOf="@+id/playButton" />
 
     <ImageButton
         android:id="@+id/doneButton"
@@ -142,13 +296,58 @@
         android:layout_height="72dp"
         android:layout_marginStart="8dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/done_button"
+        android:onClick="onDoneButtonClick"
         android:scaleType="fitStart"
         android:src="@drawable/baseline_check_circle_24"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/playButton"
         app:layout_constraintStart_toEndOf="@+id/playButton"
-        app:layout_constraintTop_toTopOf="@+id/playButton"
-        android:visibility="invisible"
-        android:contentDescription="@string/done_button"
-        android:onClick="onDoneButtonClick"/>
+        app:layout_constraintTop_toTopOf="@+id/playButton" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/timerFalseAlarmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/raised_hand"
+        app:fabCustomSize="95dp"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="@+id/materialCardView"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout"
+        app:maxImageSize="50dp"
+        android:contentDescription="@string/false_alarm_floating_button" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintStart_toStartOf="@+id/materialCardView"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/timerDroppedTreatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/dropped_treat_button" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/timerDefecationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/defecation_button"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/timerDisqualificationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/disqualification_button"
+            android:textColor="@color/md_theme_light_onErrorContainer"
+            app:backgroundTint="@color/md_theme_light_errorContainer" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
