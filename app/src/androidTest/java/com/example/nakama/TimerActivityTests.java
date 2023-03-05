@@ -16,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
 import com.example.nakama.SharedPreferences.AppPreferences;
+import com.example.nakama.Utils.Action;
 import com.example.nakama.Utils.Validate;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -233,7 +234,7 @@ public class TimerActivityTests {
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(10000);
         //Close timeout dialog
-        onView(withText(R.string.dialog_positive_ok_button)).perform(click());
+        Action.clickByText(R.string.dialog_positive_ok_button);
         //Click reset when finished
         onView(withId(R.id.resetButton)).perform(click());
         //Validate if dialog is displayed
@@ -294,7 +295,6 @@ public class TimerActivityTests {
             restartButton = activity.findViewById(R.id.resetButton);
             doneButton = activity.findViewById(R.id.doneButton);
         });
-
     }
 
     public void validateDefaultActivityState(){

@@ -2,6 +2,7 @@ package com.example.nakama.Utils;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -21,7 +22,12 @@ public class Action {
     }
 
     public static void clickByText(int id){
-        onView(withText(id)).perform(click());
+        try{
+            onView(withText(id)).perform(click());
+        }
+        catch (Exception e){
+            onView(withText(id)).inRoot(isDialog()).perform(click());
+        }
     }
 
     public static String getText(final Matcher<View> matcher) {

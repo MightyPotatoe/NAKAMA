@@ -1,10 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/timerContainer"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="?attr/theme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.TimerActivity.TimerActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/timerTopBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/advanced_difficulty_color"
+        android:paddingBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/timerDifficultyImage"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@color/advanced_difficulty_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ImageView.Corner"
+            app:srcCompat="@drawable/advanced_level_icon" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/timerDifficultyTextView"
+            style="@style/TextAppearance.Material3.TitleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/app_name"
+            android:textColor="@color/md_theme_light_onPrimary"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/timerRingDetailsTextView"
+            style="@style/TextAppearance.Material3.TitleMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/md_theme_light_onPrimary"
+            app:layout_constraintStart_toStartOf="@+id/timerDifficultyTextView"
+            app:layout_constraintTop_toBottomOf="@+id/timerDifficultyTextView" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/timerUserDetailsTextView"
+            style="@style/TextAppearance.Material3.BodyMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/md_theme_light_onPrimary"
+            app:layout_constraintStart_toStartOf="@+id/timerRingDetailsTextView"
+            app:layout_constraintTop_toBottomOf="@+id/timerRingDetailsTextView" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/timeTextView"
@@ -22,13 +81,12 @@
         android:layout_width="280dp"
         android:layout_height="502dp"
         android:progress="85"
-        app:indicatorColor="@color/md_theme_light_primary"
         app:indicatorSize="280dp"
         app:layout_constraintBottom_toTopOf="@+id/playButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timerTopBarLayout"
         app:layout_constraintVertical_chainStyle="packed"
         app:trackColor="@color/md_theme_light_surfaceVariant"
         app:trackThickness="24dp" />
