@@ -84,7 +84,7 @@ public class MainActivityTests {
         Users user = new Users("Tomasz", "Szymaniak", "Nala");
         int userId = db.getUserId(user);
         db.addUserScore(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1);
-        db.userScoresDao().updateUserScores(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1, "01:00:00", 1, 1, true, 75, "Ok");
+        db.userScoresDao().updateUserScores(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1, "01:00:00", 1, 1, true, 75, "Ok", 0);
         List<UserScores> userScores = db.userScoresDao().getUserScores(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1);
         Assert.assertEquals(userScores.get(0).attemptTime, "01:00:00");
 
@@ -140,7 +140,7 @@ public class MainActivityTests {
         Users user = new Users("Tomasz", "Szymaniak", "Nala");
         int userId = db.getUserId(user);
         db.addUserScore(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1);
-        db.userScoresDao().updateUserScores(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1, "01:00:00", 1, 1, true, 75, "Ok");
+        db.userScoresDao().updateUserScores(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1, "01:00:00", 1, 1, true, 75, "Ok", 0);
         List<UserScores> userScores = db.userScoresDao().getUserScores(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1);
         Assert.assertEquals(userScores.get(0).attemptTime, "01:00:00");
 

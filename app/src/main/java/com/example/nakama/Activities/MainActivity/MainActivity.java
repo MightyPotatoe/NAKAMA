@@ -31,11 +31,17 @@ public class MainActivity extends AppCompatActivity {
 
         MainActivityViewManager viewManager = new MainActivityViewManager(this);
         viewManager.setCardsDefaultContent();
-        viewManager.getBasicLevelButton().setOnClickListener(view ->
-                openTimerActivity(120000, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1, user));
+        viewManager.getBasicLevelButton().setOnClickListener(view ->{
+            appPreferences.setFalseAlarmsLimit(1);
+            appPreferences.setSamplesInRun(1);
+            openTimerActivity(120000, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1, user);
+        });
 
-        viewManager.getAdvancedLevelButton().setOnClickListener(view ->
-                openTimerActivity(240000, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1, user));
+        viewManager.getAdvancedLevelButton().setOnClickListener(view ->{
+            appPreferences.setFalseAlarmsLimit(2);
+            appPreferences.setSamplesInRun(2);
+            openTimerActivity(240000, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1, user);
+        });
     }
 
     public void showConfirmClearingAttemptDialog(int userId, String difficulty, String ring) {

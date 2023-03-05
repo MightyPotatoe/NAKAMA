@@ -98,7 +98,7 @@
                     style="@style/TextAppearance.Material3.TitleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/default_timer_value"
+                    android:text="@string/zero_timer_value"
                     app:layout_constraintBottom_toBottomOf="@+id/timeProgressBar"
                     app:layout_constraintEnd_toEndOf="@+id/timeProgressBar"
                     app:layout_constraintStart_toStartOf="@+id/timeProgressBar"
@@ -191,6 +191,26 @@
 
                         <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/timerDroppedTreatsCounter"
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/app_name" />
+                    </TableRow>
+
+                    <TableRow>
+
+                        <com.google.android.material.textview.MaterialTextView
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/samples_found_label"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/timerSamplesFound"
                             style="@style/TextAppearance.Material3.BodyMedium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -316,7 +336,8 @@
         app:layout_constraintStart_toEndOf="@+id/linearLayout"
         app:layout_constraintTop_toTopOf="@+id/linearLayout"
         app:maxImageSize="50dp"
-        android:contentDescription="@string/false_alarm_floating_button" />
+        android:contentDescription="@string/false_alarm_floating_button"
+        android:onClick="onFalseAlarmButtonClick"/>
 
     <LinearLayout
         android:id="@+id/linearLayout"
