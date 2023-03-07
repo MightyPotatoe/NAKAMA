@@ -22,6 +22,8 @@
     <string name="confirm_false_alarm_dialog_message">Czy na pewno chcesz zgłosić fałszywy alarm?</string>
     <!--Confirm positive alarm Resources-->
     <string name="confirm_positive_alarm_dialog_message">Potwierdź odnalezienie próbki.</string>
+    <!--Confirm treat dropped Resources-->
+    <string name="confirm_treat_dropped_dialog_message">Czy na pewno odnotować upuszczenie smakołyka na ring?</string>
     <!--Confirm new attempt Dialog Resources-->
     <string name="confirm_new_attempt_dialog_message">Czy na pewno chcesz rozpocząć następne podejście?</string>
     <string name="scored_points_label">Zdobyte punkty:</string>
@@ -33,6 +35,9 @@
     <!--All samples found reached Dialog Resources-->
     <string name="all_samples_found_dialog_title">Odnaleziono wszystkie próbki!</string>
     <string name="all_samples_found_dialog_message">Próba została zakończona. Użytkownik odnalazł wszystkie próbki.</string>
+    <!--False alarm limit reached Dialog Resources-->
+    <string name="tread_dropped_limit_reached_dialog_title">Przekroczono dopuszczalny limit upuszczonych smaczków!</string>
+    <string name="tread_dropped_limit_reached_dialog_message">Próba została zakończona. Użytkownik zakończył próbę z wynikiem 0 pkt i maksymalnym czasem.</string>
 
     <!--Main Activity Resources-->
     <string name="basic_level_title">Podstawowy</string>

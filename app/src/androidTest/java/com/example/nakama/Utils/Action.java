@@ -19,10 +19,20 @@ import org.hamcrest.Matcher;
 public class Action {
 
     public static void clickById(int id){
-        onView(withId(id)).perform(click());
+        try{
+            onView(withId(id)).perform(click());
+        }
+        catch (Exception e){
+            onView(withId(id)).inRoot(isDialog()).perform(click());
+        }
     }
-    public static void clickOnView(Matcher<View> view){
-        onView(view).perform(click());
+    public static void clickOnView(Matcher<View> view) {
+        try{
+            onView(view).perform(click());
+        }
+        catch (Exception f) {
+                onView(view).inRoot(isDialog()).perform(click());
+        }
     }
 
     public static void clickByText(int id){
