@@ -14,7 +14,11 @@ import android.widget.TextView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.example.nakama.Activities.MainActivity.MainActivity;
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
+import com.example.nakama.DataBase.AppDatabase;
+import com.example.nakama.Screens.MainActivityScreen;
+import com.example.nakama.Screens.TimerActivityScreen;
 import com.example.nakama.SharedPreferences.AppPreferences;
 import com.example.nakama.Utils.Action;
 import com.example.nakama.Utils.Validate;
@@ -34,10 +38,14 @@ public class TimerActivityTests {
     ImageButton restartButton;
     ImageButton doneButton;
     ActivityScenario<TimerActivity> scenario;
-    void beforeMethod(){
+
+    AppPreferences appPreferences;
+
+    AppDatabase db;
+    void initializeSettings(){
         scenario = ActivityScenario.launch(TimerActivity.class);
         scenario.onActivity(activity -> {
-            AppPreferences appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
+            appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
             appPreferences.setPollingFrequency(500);
             appPreferences.setRingTime(10000);
         });
@@ -45,139 +53,48 @@ public class TimerActivityTests {
         initializeView(scenario);
     }
 
-
     /**
-     * Given user is on MainActivity
-     * And timer is set to 10 seconds
-     * Then following elements are displayed:
-     * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
-     * | Time Progress Bar | VISIBLE    |          |10000 | 10000    |
-     * | Play button       | VISIBLE    |          |      |          |
-     * | Pause button      | INVISIBLE  |          |      |          |
-     * | Reset button      | INVISIBLE  |          |      |          |
-     * | Done button       | INVISIBLE  |          |      |          |
-     * | Time TextView     | VISIBLE    | 00:10:00 |      |          |
-     * When user press play button
-     * Then following elements are displayed:
-     * | ELEMENT           | VISIBILITY | TEXT        |MAX     | PROGRESS  |
-     * | Time Progress Bar | VISIBLE    |             | 10000  | !=10000 |
-     * | Play button       | INVISIBLE  |             |        |           |
-     * | Pause button      | VISIBLE    |             |        |           |
-     * | Reset button      | INVISIBLE  |             |        |           |
-     * | Done button       | INVISIBLE  |             |        |           |
-     * | Time TextView     | VISIBLE    | != 00:00:00 |        |           |
-     * Then After timer is finished following elements are displayed:
-     * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
-     * | Time Progress Bar | VISIBLE    |          |10000 | 0        |
-     * | Play button       | INVISIBLE  |          |      |          |
-     * | Pause button      | INVISIBLE  |          |      |          |
-     * | Reset button      | VISIBLE    |          |      |          |
-     * | Done button       | VISIBLE    |          |      |          |
-     * | Time TextView     | VISIBLE    | 00:00:00 |      |          |
+     * Check default activity state when entering base mode
      */
     @Test
-    public void timer_activity_should_display_play_button_on_launch() throws InterruptedException {
-        beforeMethod();
-        validateDefaultActivityState();
+    public void validate_starting_activity_state(){
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(ActivityScenario.launch(MainActivity.class));
+        mainActivityScreen.clickStartBasicModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
 
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(1000);
-        validateInProgressActivityState();
-
-        Thread.sleep(10000);
-        validateFinishedActivityState();
-        scenario.close();
+        timerActivityScreen.validateTimer(120000);
+        timerActivityScreen.validateDefaultStateTimerButtons();
+        timerActivityScreen.validateIfActionButtonsAreDisabled();
+        timerActivityScreen.validateScores(200,0,0,0,0);
     }
 
     /**
-     * Given user is on MainActivity
-     * And timer is set to 10 seconds
-     * When user press 'play' button and waits 2s
-     * And user press 'pause'
-     * Then following elements are displayed:
-     * | ELEMENT           | VISIBILITY |
-     * | Time Progress Bar | VISIBLE    |
-     * | Play button       | VISIBLE    |
-     * | Pause button      | INVISIBLE  |
-     * | Reset button      | VISIBLE    |
-     * | Done button       | VISIBLE    |
-     * | Time TextView     | VISIBLE    |
-     * When user waits 2s
-     * Then values on timer and progress bar are not changed
-     * When user press 'play' and waits 1s
-     * Then following elements are displayed:
-     * | ELEMENT           | VISIBILITY |
-     * | Time Progress Bar | VISIBLE    |
-     * | Play button       | INVISIBLE  |
-     * | Pause button      | VISIBLE    |
-     * | Reset button      | INVISIBLE  |
-     * | Done button       | INVISIBLE  |
-     * | Time TextView     | VISIBLE    |
-     * When user press 'pause'
-     * Then following elements are displayed:
-     * | ELEMENT           | VISIBILITY |
-     * | Time Progress Bar | VISIBLE    |
-     * | Play button       | VISIBLE    |
-     * | Pause button      | INVISIBLE  |
-     * | Reset button      | VISIBLE    |
-     * | Done button       | VISIBLE    |
-     * | Time TextView     | VISIBLE    |
-     * And timer value and progress bar progress is lesser than on previous pause
-     * When user waits 2s
-     * Then values on timer and progress bar are not changed
-     * When user press 'play' and waits for timer to finish
-     * Then After timer is finished following elements are displayed:
-     * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
-     * | Time Progress Bar | VISIBLE    |          |10000 | 0        |
-     * | Play button       | INVISIBLE  |          |      |          |
-     * | Pause button      | INVISIBLE  |          |      |          |
-     * | Reset button      | VISIBLE    |          |      |          |
-     * | Done button       | VISIBLE    |          |      |          |
-     * | Time TextView     | VISIBLE    | 00:00:00 |      |          |
+     * Check if activity is paused and continued later.
      */
     @Test
     public void timer_activity_should_pause_and_continue() throws InterruptedException {
-        beforeMethod();
-        //Click start and wait 2s
-        validateDefaultActivityState();
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(2000);
-        validateInProgressActivityState();
-        //Click pause
-        onView(withId(R.id.pauseButton)).perform(click());
-        validatePausedActivityState();
-        String timerValueOnPause = (String) textView.getText();
-        int progressBarMaxOnPause = circularProgressIndicator.getMax();
-        int progressBarProgressOnPause = circularProgressIndicator.getProgress();
-        //Wait 2s to check if timer is actually stopped
-        Thread.sleep(2000);
-        Assert.assertEquals(timerValueOnPause, textView.getText());
-        Assert.assertEquals(progressBarMaxOnPause, circularProgressIndicator.getMax());
-        Assert.assertEquals(progressBarProgressOnPause, circularProgressIndicator.getProgress());
+        TimerActivityScreen timerActivityScreen = new TimerActivityScreen(10000, 500);
+        String beginningTime = timerActivityScreen.getTimerText();
+        Assert.assertEquals("00:10:00", beginningTime);
 
-        //Click play and wait 1s
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(1000);
-        validateInProgressActivityState();
-
-        //Click pause again
-        onView(withId(R.id.pauseButton)).perform(click());
-        validatePausedActivityState();
-        String timerValueOnSecondPause = (String) textView.getText();
-        int progressBarMaxOnSecondPause = circularProgressIndicator.getMax();
-        int progressBarProgressOnSecondPause = circularProgressIndicator.getProgress();
-        Assert.assertTrue(progressBarProgressOnSecondPause < progressBarProgressOnPause);
-        //Wait 1s to check if timer is actually stopped
+        timerActivityScreen.clickPlayButton();
         Thread.sleep(2000);
-        Assert.assertEquals(timerValueOnSecondPause, textView.getText());
-        Assert.assertEquals(progressBarMaxOnSecondPause, circularProgressIndicator.getMax());
-        Assert.assertEquals(progressBarProgressOnSecondPause, circularProgressIndicator.getProgress());
+        Assert.assertNotEquals(beginningTime, timerActivityScreen.getTimerText());
+        timerActivityScreen.validateIfActionButtonsAreEnabled();
+        timerActivityScreen.validateInProgressStateTimerButtons();
 
-        //Cllick play and wait for timer to be finished
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(10000);
-        validateFinishedActivityState();
-        scenario.close();
+        timerActivityScreen.clickPauseButton();
+        timerActivityScreen.validateIfActionButtonsAreEnabled();
+        timerActivityScreen.validateInPausedStateTimerButtons();
+        String currentTime = timerActivityScreen.getTimerText();
+        Thread.sleep(2000);
+        Assert.assertEquals(currentTime, timerActivityScreen.getTimerText());
+
+        timerActivityScreen.clickPlayButton();
+        Thread.sleep(2000);
+        Assert.assertNotEquals(currentTime, timerActivityScreen.getTimerText());
+        timerActivityScreen.validateIfActionButtonsAreEnabled();
+        timerActivityScreen.validateInProgressStateTimerButtons();
     }
 
     /**
@@ -212,7 +129,7 @@ public class TimerActivityTests {
      */
     @Test
     public void timer_should_be_reset_when_reset_button_is_pressed_and_choice_is_confirmed() throws InterruptedException {
-        beforeMethod();
+        initializeSettings();
         validateDefaultActivityState();
         //Click start and wait 2s
         onView(withId(R.id.playButton)).perform(click());
@@ -255,7 +172,7 @@ public class TimerActivityTests {
      */
     @Test
     public void dialogShouldBeDisplayedWhenTimerIsFinished() throws InterruptedException {
-        beforeMethod();
+        initializeSettings();
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(10000);
         validateTimeoutDialog();
@@ -265,7 +182,7 @@ public class TimerActivityTests {
 
     @Test
     public void reset_dialog_should_be_dismissed_when_no_is_clicked_and_timer_should_not_be_reset() throws InterruptedException {
-        beforeMethod();
+        initializeSettings();
         onView(withId(R.id.playButton)).perform(click());
         Thread.sleep(2000);
         onView(withId(R.id.pauseButton)).perform(click());
@@ -285,6 +202,69 @@ public class TimerActivityTests {
         validateFinishedActivityState();
     }
 
+
+    /**
+     * False alarms counter should be incremented. When limit is reached it timer and score should be set to zero.
+     * 50pts should be subtract on each false alarm
+     */
+    @Test
+    public void false_alarms_button_should_increase_counter_and_stop_when_limit_reached() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        mainActivityScreen.clickStartAdvancedModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+
+        timerActivityScreen.clickPlayButton();
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickFalseAlarm();
+        timerActivityScreen.confirmFalseAlarm();
+        timerActivityScreen.validateScores(150, 1, 0, 0, 0);
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickFalseAlarm();
+        timerActivityScreen.confirmFalseAlarm();
+        timerActivityScreen.validateScores(100, 2, 0, 0, 0);
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickFalseAlarm();
+        timerActivityScreen.confirmFalseAlarm();
+        timerActivityScreen.dismissFalseAlarmLimitReachedDialog();
+        timerActivityScreen.validateScores(0, 3, 0, 0, 0);
+        timerActivityScreen.validateTimer("00:00:00", 0);
+    }
+
+    /**
+     * Samples Found alarms counter should be incremented. When limit is reached it timer and score should be set to zero.
+     * 50pts should be subtract on each false alarm
+     */
+
+    @Test
+    public void positive_alarms_button_should_increase_counter_and_stop_when_limit_reached() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        mainActivityScreen.clickStartAdvancedModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+
+        timerActivityScreen.clickPlayButton();
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickPositiveAlarm();
+        timerActivityScreen.confirmPositiveAlarm();
+        timerActivityScreen.validateScores(200, 0, 0, 0, 1);
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickPositiveAlarm();
+        timerActivityScreen.confirmPositiveAlarm();
+        timerActivityScreen.dismissAllSamplesFoundDialog();
+        timerActivityScreen.validateScores(200, 0, 0, 0, 2);
+        String currentTime = timerActivityScreen.getTimerText();
+        Assert.assertNotEquals("04:00:00", currentTime);
+        Thread.sleep(1000);
+        String timeAfterWait = timerActivityScreen.getTimerText();
+        Assert.assertEquals(timeAfterWait, currentTime);
+    }
+
     //-----------------TEST UTILS---------------------------------------
     private <T extends Activity> void initializeView(ActivityScenario<T> scenario) {
         scenario.onActivity(activity -> {
@@ -297,7 +277,8 @@ public class TimerActivityTests {
         });
     }
 
-    public void validateDefaultActivityState(){
+    public void validateDefaultActivityState() throws InterruptedException {
+        Thread.sleep(1000);
         Assert.assertEquals(View.VISIBLE, circularProgressIndicator.getVisibility());
         Assert.assertEquals(10000, circularProgressIndicator.getMax());
         Assert.assertEquals(10000, circularProgressIndicator.getProgress());
@@ -373,6 +354,5 @@ public class TimerActivityTests {
         Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_attempt_dialog_message));
         Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
         Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
-
     }
 }

@@ -20,6 +20,8 @@
     <string name="confirm_attempt_dialog_message">Czy na pewno chcesz zakończyć podejście i przejść do podsumowania?</string>
     <!--Confirm false alarm Resources-->
     <string name="confirm_false_alarm_dialog_message">Czy na pewno chcesz zgłosić fałszywy alarm?</string>
+    <!--Confirm positive alarm Resources-->
+    <string name="confirm_positive_alarm_dialog_message">Potwierdź odnalezienie próbki.</string>
     <!--Confirm new attempt Dialog Resources-->
     <string name="confirm_new_attempt_dialog_message">Czy na pewno chcesz rozpocząć następne podejście?</string>
     <string name="scored_points_label">Zdobyte punkty:</string>
@@ -28,20 +30,23 @@
     <!--False alarm limit reached Dialog Resources-->
     <string name="false_alarms_reached_dialog_title">Przekroczono dopuszczalny limit fałszywych alarmów!</string>
     <string name="false_alarms_reached_dialog_message">Próba została zakończona. Użytkownik zakończył próbę z wynikiem 0 pkt i maksymalnym czasem.</string>
+    <!--All samples found reached Dialog Resources-->
+    <string name="all_samples_found_dialog_title">Odnaleziono wszystkie próbki!</string>
+    <string name="all_samples_found_dialog_message">Próba została zakończona. Użytkownik odnalazł wszystkie próbki.</string>
 
     <!--Main Activity Resources-->
     <string name="basic_level_title">Podstawowy</string>
-    <string name="basic_level_description">2:00 min czasu przeszukania </string>
+    <string name="basic_level_description">Jedna próbka\n2:00 min czasu przeszukania </string>
     <string name="advanced_level_title">Zaawansowany</string>
-    <string name="advanced_level_description">4:00 min czasu przeszukania </string>
+    <string name="advanced_level_description">Dwie próbki\n4:00 min czasu przeszukania </string>
     <string name="button_begin">Rozpocznij</string>
     <string name="false_alarm_label">Fałszywe alarmy:</string>
-    <string name="defecation_label">Defekacje na ringu:</string>
+    <string name="defecation_label">Sikupy na ringu:</string>
     <string name="dropped_treat_label">Upuszczone smaczki:</string>
     <string name="actual_score_label">Aktualny wynik:</string>
     <string name="false_alarm_floating_button">false_alarm_floating_button</string>
     <string name="dropped_treat_button">Upuszczenie smaczka</string>
-    <string name="defecation_button">Defekacja</string>
+    <string name="defecation_button">Sikupa</string>
     <string name="disqualification_button">Dyskwalifikacja</string>
     <string name="samples_found_label">Znalezione próbki:</string>
 

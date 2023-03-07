@@ -144,6 +144,11 @@ public class TimerActivity extends AppCompatActivity {
         showConfirmFalseAlarmDialog();
     }
 
+    public void onPositiveAlarmButtonClick(View view) {
+        Log.v("ACTIVITY DEBUG:", "Positive alarm button pressed");
+        showConfirmPositiveAlarmDialog();
+    }
+
     public void showTimeUpDialog() {
         new MaterialAlertDialogBuilder(TimerActivity.this)
                 .setTitle(R.string.timeout_dialog_title)
@@ -165,6 +170,7 @@ public class TimerActivity extends AppCompatActivity {
                             user);
                     db.clearUserScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    viewManager.setFunctionalButtonsEnabled(false);
                 })
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
@@ -216,6 +222,29 @@ public class TimerActivity extends AppCompatActivity {
                         return;
                     }
                     db.userScoresDao().updateUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), currentScore - 50);
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                })
+                .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
+                .show();
+    }
+
+    public void showConfirmPositiveAlarmDialog() {
+        new MaterialAlertDialogBuilder(TimerActivity.this)
+                .setTitle(R.string.confirm_dialog_title)
+                .setMessage(R.string.confirm_positive_alarm_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
+                    //add samples found
+                    int samplesFound = db.userScoresDao().getUserScoresSamplesFound(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    samplesFound += 1;
+                    //Update samples found
+                    db.userScoresDao().updateUserScoresSamplesFound(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), samplesFound);
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    //If all samples found stop timer
+                    if(samplesFound == appPreferences.getSamplesInRun()){
+                        this.stopService(timerServiceIntent);
+                        viewManager.setViewToFinishedState();
+                        showAllSamplesFoundDialog();
+                    }
                 })
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
@@ -232,4 +261,14 @@ public class TimerActivity extends AppCompatActivity {
                 })
                 .show();
     }
+
+    public void  showAllSamplesFoundDialog() {
+        new MaterialAlertDialogBuilder(TimerActivity.this)
+                .setTitle(R.string.all_samples_found_dialog_title)
+                .setMessage(R.string.all_samples_found_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
+                })
+                .show();
+    }
+
 }

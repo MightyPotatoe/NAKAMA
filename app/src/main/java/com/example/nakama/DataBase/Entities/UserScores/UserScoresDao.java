@@ -37,4 +37,9 @@ public interface UserScoresDao {
     int getUserScoresScore(int userId, String difficulty, String ring);
     @Query("update UserScores set score = :score where user_id = :userId and difficulty = :difficulty and ring = :ring")
     void updateUserScoresScore(int userId, String difficulty, String ring, int score);
+
+    @Query("update UserScores set samples_found = :samplesFound where user_id = :userId and difficulty = :difficulty and ring = :ring")
+    void updateUserScoresSamplesFound(int userId, String difficulty, String ring, int samplesFound);
+    @Query("select samples_found from UserScores where user_id = :userId and difficulty = :difficulty and ring = :ring")
+    int getUserScoresSamplesFound(int userId, String difficulty, String ring);
 }

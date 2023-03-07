@@ -75,7 +75,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:padding="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,8 +85,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
@@ -325,28 +325,65 @@
         app:layout_constraintStart_toEndOf="@+id/playButton"
         app:layout_constraintTop_toTopOf="@+id/playButton" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/timerFalseAlarmButton"
+    <LinearLayout
+        android:id="@+id/linearLayout3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/raised_hand"
-        app:fabCustomSize="95dp"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="@+id/materialCardView"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/linearLayout"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout"
-        app:maxImageSize="50dp"
-        android:contentDescription="@string/false_alarm_floating_button"
-        android:onClick="onFalseAlarmButtonClick"/>
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/timerFalseAlarmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/false_alarm_floating_button"
+            android:onClick="onFalseAlarmButtonClick"
+            app:srcCompat="@drawable/raised_hand"
+            app:tint="@color/md_theme_light_onErrorContainer"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:backgroundTint="@color/md_theme_light_errorContainer"
+            app:fabCustomSize="76dp"
+            app:maxImageSize="50dp"
+            tools:layout_editor_absoluteX="319dp"
+            tools:layout_editor_absoluteY="499dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/timerPositiveAlarmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/false_alarm_floating_button"
+            android:onClick="onPositiveAlarmButtonClick"
+            android:src="@drawable/raised_hand"
+            app:fabCustomSize="76dp"
+            app:maxImageSize="50dp"
+            tools:layout_editor_absoluteX="355dp"
+            tools:layout_editor_absoluteY="575dp" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/playButton"
-        app:layout_constraintStart_toStartOf="@+id/materialCardView"
-        app:layout_constraintTop_toBottomOf="@+id/materialCardView">
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout3">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/timerDroppedTreatButton"
@@ -359,12 +396,13 @@
             android:id="@+id/timerDefecationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/defecation_button"/>
+            android:text="@string/defecation_button" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/timerDisqualificationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="@string/disqualification_button"
             android:textColor="@color/md_theme_light_onErrorContainer"
             app:backgroundTint="@color/md_theme_light_errorContainer" />

@@ -40,6 +40,7 @@ public class TimerActivityViewManager {
 
     private final TextView samplesFoundTextView;
     private final FloatingActionButton falseAlarmsButton;
+    private final FloatingActionButton positiveAlarmsButton;
     private final Button defecationButton;
     private final Button droppedTreatsButton;
     private final Button disqualifiedButton;
@@ -61,6 +62,7 @@ public class TimerActivityViewManager {
         defecationTextView = activity.findViewById(R.id.timerDefecationCounter);
         droppedTreatsTextView = activity.findViewById(R.id.timerDroppedTreatsCounter);
         falseAlarmsButton = activity.findViewById(R.id.timerFalseAlarmButton);
+        positiveAlarmsButton = activity.findViewById(R.id.timerPositiveAlarmButton);
         defecationButton = activity.findViewById(R.id.timerDefecationButton);
         droppedTreatsButton = activity.findViewById(R.id.timerDroppedTreatButton);
         disqualifiedButton = activity.findViewById(R.id.timerDisqualificationButton);
@@ -145,16 +147,21 @@ public class TimerActivityViewManager {
 
     public void setFunctionalButtonsEnabled(boolean enabled){
         falseAlarmsButton.setEnabled(enabled);
+        positiveAlarmsButton.setEnabled(enabled);
         defecationButton.setEnabled(enabled);
         droppedTreatsButton.setEnabled(enabled);
         disqualifiedButton.setEnabled(enabled);
         if(enabled){
             disqualifiedButton.setBackgroundColor(activity.getColor(R.color.md_theme_light_errorContainer));
             disqualifiedButton.setAlpha(1f);
+            falseAlarmsButton.setBackgroundColor(activity.getColor(R.color.md_theme_light_errorContainer));
+            falseAlarmsButton.setAlpha(1f);
         }
         else {
             disqualifiedButton.setBackgroundColor(activity.getColor(com.google.android.material.R.color.switch_thumb_disabled_material_light));
             disqualifiedButton.setAlpha(.5f);
+            falseAlarmsButton.setBackgroundColor(activity.getColor(com.google.android.material.R.color.switch_thumb_disabled_material_light));
+            falseAlarmsButton.setAlpha(.5f);
         }
     }
 }
