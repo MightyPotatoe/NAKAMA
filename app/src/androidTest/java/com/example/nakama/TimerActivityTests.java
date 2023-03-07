@@ -235,10 +235,8 @@ public class TimerActivityTests {
     }
 
     /**
-     * Samples Found alarms counter should be incremented. When limit is reached it timer and score should be set to zero.
-     * 50pts should be subtract on each false alarm
+     * Samples Found counter should be incremented. When all samples are found timer should be stopped.
      */
-
     @Test
     public void positive_alarms_button_should_increase_counter_and_stop_when_limit_reached() throws InterruptedException {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
