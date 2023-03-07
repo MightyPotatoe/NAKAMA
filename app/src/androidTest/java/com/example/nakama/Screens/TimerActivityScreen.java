@@ -50,6 +50,20 @@ public class TimerActivityScreen extends BaseScreen{
     public static Matcher<View> pauseButton =  withId(R.id.pauseButton);
     public static Matcher<View> resetButton =  withId(R.id.resetButton);
     public static Matcher<View> doneButton =  withId(R.id.doneButton);
+
+    //---Dialog ---
+    public static Matcher<View> reasonEditText =  withId(R.id.textInput);
+
+    public String getDifficultyTopBarText(){
+        return Action.getText(difficultyTextView);
+    }
+    public String getUsernameTopBarText(){
+        return Action.getText(usernameTextView);
+    }
+    public String gerRingTopBarText(){
+        return Action.getText(ringTextView);
+    }
+
     public TimerActivityScreen(ActivityScenario<?> scenario) {
         super(scenario);
         scenario.onActivity(activity -> appPreferences.setPollingFrequency(500));
@@ -100,6 +114,20 @@ public class TimerActivityScreen extends BaseScreen{
     }
     public void clickDefecationButton() {
         Action.clickOnView(defecationButton);
+    }
+    public void clickDisqualificationButton() {
+        Action.clickOnView(disqualifiedButton);
+    }
+    public void confirmDisqualification() {
+        validateDisqualificationConfirmationDialog();
+        Action.clickByText(R.string.dialog_positive_yes_button);
+    }
+
+    public RingResultActivityScreen provideReasonAndDismissDisqualificationDialog(String reason){
+        validateDisqualificationReasonDialog();
+        Action.sendKeys(reasonEditText, reason);
+        Action.clickByText(R.string.dialog_positive_ok_button);
+        return new RingResultActivityScreen(scenario);
     }
 
     public void confirmFalseAlarm() {
@@ -218,6 +246,17 @@ public class TimerActivityScreen extends BaseScreen{
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_defecation_dialog_message));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+    }
+    public void validateDisqualificationConfirmationDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_disqualification_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+    }
+    public void validateDisqualificationReasonDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.disqualification_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.provide_disqualification_reason_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
     }
     public void validateTreatDroppedLimitReachedDialog(){
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.tread_dropped_limit_reached_dialog_title));

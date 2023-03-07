@@ -7,8 +7,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -101,7 +103,9 @@ public class TimerActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             //get BROADCAST_TIMER_VALUE from broadcast and process it
             long timeLeft = intent.getLongExtra(TimerService.BROADCAST_TIMER_VALUE, appPreferences.getRingTime());
-            viewManager.setTimerCurrentTime(timeLeft);
+            if(!TimerService.forcedFinish){
+                viewManager.setTimerCurrentTime(timeLeft);
+            }
             if(timeLeft == 0){
                 viewManager.setViewToFinishedState();
                 showTimeUpDialog();
@@ -157,6 +161,10 @@ public class TimerActivity extends AppCompatActivity {
     public void onDefecationButtonClick(View view) {
         Log.v("ACTIVITY DEBUG:", "Defecation button pressed");
         showConfirmDefecationDialog();
+    }
+    public void onDisqualifyButtonCLick(View view) {
+        Log.v("ACTIVITY DEBUG:", "Disqualify button pressed");
+        showConfirmDisqualificationDialog();
     }
 
     public void showTimeUpDialog() {
@@ -355,8 +363,46 @@ public class TimerActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void showConfirmDisqualificationDialog() {
+        new MaterialAlertDialogBuilder(TimerActivity.this)
+                .setTitle(R.string.confirm_dialog_title)
+                .setMessage(R.string.confirm_disqualification_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
+                    stopTimerAndStopService();
+                    viewManager.setViewToFinishedState();
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    viewManager.setTimerCurrentTime(0);
+                    db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    showDisqualificationReasonInputDialog();
+                })
+                .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
+                .show();
+    }
+
+    public void showDisqualificationReasonInputDialog() {
+        LayoutInflater inflater = TimerActivity.this.getLayoutInflater();
+        View mView = inflater.inflate(R.layout.edit_text_view, null, false);
+        EditText editText = (EditText) mView.findViewById(R.id.textInput);
+        new MaterialAlertDialogBuilder(TimerActivity.this)
+                .setView(mView)
+                .setTitle(R.string.disqualification_dialog_title)
+                .setMessage(R.string.provide_disqualification_reason_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
+                    db.disqualifyContestant(user.uid, appPreferences.getDifficulty(), editText.getText().toString());
+                    Intent intent = new Intent(this, AttemptSummaryActivity.class);
+                    startActivity(intent);
+                })
+                .setCancelable(false)
+                .show();
+    }
+
     public void stopTimerAndStopService(){
-        TimerService.countDownTimer.cancel();
+        TimerService.cancelTimer();
         this.stopService(timerServiceIntent);
+    }
+
+    public String getText(EditText editText){
+        return editText.getText().toString();
     }
 }

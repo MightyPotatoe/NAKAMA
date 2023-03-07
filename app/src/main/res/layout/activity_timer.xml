@@ -407,7 +407,8 @@
             android:layout_marginBottom="8dp"
             android:text="@string/disqualification_button"
             android:textColor="@color/md_theme_light_onErrorContainer"
-            app:backgroundTint="@color/md_theme_light_errorContainer" />
+            app:backgroundTint="@color/md_theme_light_errorContainer"
+            android:onClick="onDisqualifyButtonCLick"/>
 
     </LinearLayout>
 

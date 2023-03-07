@@ -321,4 +321,42 @@ public class TimerActivityTests {
         Assert.assertEquals(Converter.millisToString(240000), userScore4.attemptTime);
         Assert.assertEquals("Załatwianie potrzeb fizjologicznych na więcej niż jednym ringu.", userScore1.disqualification_reason);
     }
+
+    /**
+     * When user press disqualify button - confirmation is prompt. If accepted timer is stopped and user is asked to provide reason.
+     * Then this reason should be saved in DB.
+     */
+    @Test
+    public void disqualification_button_test() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        Users user = new Users("Tomasz", "Szymaniak", "Nala");
+        int userId = mainActivityScreen.db.getUserId(user);
+        mainActivityScreen.db.addUserScoreForAllRingsIfNotExists(userId, Dictionary.Difficulty.Advanced.NAME);
+
+        mainActivityScreen.clickStartAdvancedModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+
+        timerActivityScreen.clickPlayButton();
+        Thread.sleep(1000);
+        timerActivityScreen.clickDisqualificationButton();
+        timerActivityScreen.confirmDisqualification();
+        RingResultActivityScreen ringResultActivityScreen = timerActivityScreen.provideReasonAndDismissDisqualificationDialog("Bo jest dupkiem.");
+
+        // TODO: 07.03.2023 This shoud finally lead to summary of all 4 rings!
+        Assert.assertEquals("0 pkt.", ringResultActivityScreen.getSummaryPoints());
+        UserScore userScore1 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1);
+        UserScore userScore2 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_2);
+        UserScore userScore3 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_3);
+        UserScore userScore4 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_4);
+        Assert.assertEquals(0, userScore1.score);
+        Assert.assertEquals(0, userScore2.score);
+        Assert.assertEquals(0, userScore3.score);
+        Assert.assertEquals(0, userScore4.score);
+        Assert.assertEquals(Converter.millisToString(240000), userScore1.attemptTime);
+        Assert.assertEquals(Converter.millisToString(240000), userScore2.attemptTime);
+        Assert.assertEquals(Converter.millisToString(240000), userScore3.attemptTime);
+        Assert.assertEquals(Converter.millisToString(240000), userScore4.attemptTime);
+        Assert.assertEquals("Bo jest dupkiem.", userScore1.disqualification_reason);
+    }
 }
