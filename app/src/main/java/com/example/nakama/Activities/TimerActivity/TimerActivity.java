@@ -81,14 +81,14 @@ public class TimerActivity extends AppCompatActivity {
     }
     @Override
     protected void onStop() {
-        super.onStop();
         unregisterReceiver(broadcastReceiver); //<-- Unregister broadcast receiver to avoid memory leak
+        super.onStop();
     }
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         stopService(timerServiceIntent);
         wakeLock.release();
+        super.onDestroy();
     }
 
     //----------------------------------------------------BROADCAST RECEIVER--------------------------------------------------------------------
@@ -125,7 +125,7 @@ public class TimerActivity extends AppCompatActivity {
     public void onPauseButtonClick(View view) {
         Log.v("ACTIVITY DEBUG:", "Pause button pressed");
         TimerService.pauseTimer();
-        this.stopService(timerServiceIntent);
+        stopTimerAndStopService();
         viewManager.setViewToPausedState();
     }
 
@@ -226,7 +226,7 @@ public class TimerActivity extends AppCompatActivity {
                     int currentScore = db.userScoresDao().getUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     if(currentFalseAlarms > appPreferences.getFalseAlarmsLimit()){
-                        this.stopService(timerServiceIntent);
+                        stopTimerAndStopService();
                         viewManager.setViewToFinishedState();
                         showFalseAlarmLimitDialog();
                         return;
@@ -251,7 +251,7 @@ public class TimerActivity extends AppCompatActivity {
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     //If all samples found stop timer
                     if(samplesFound == appPreferences.getSamplesInRun()){
-                        this.stopService(timerServiceIntent);
+                        stopTimerAndStopService();
                         viewManager.setViewToFinishedState();
                         showAllSamplesFoundDialog();
                     }
@@ -294,7 +294,7 @@ public class TimerActivity extends AppCompatActivity {
                     int currentScore = db.userScoresDao().getUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     if(currentTreatDropped == 2){
-                        this.stopService(timerServiceIntent);
+                        stopTimerAndStopService();
                         viewManager.setViewToFinishedState();
                         showTreatDroppedLimitDialog();
                         return;
@@ -323,17 +323,40 @@ public class TimerActivity extends AppCompatActivity {
                 .setTitle(R.string.confirm_dialog_title)
                 .setMessage(R.string.confirm_defecation_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
+                    boolean disqualified = false;
                     //Check if there is no other defecation on any other rings (on this difficulty) - if so its disqualification
                     if(db.checkAllRingsForAnyDefecation(user.uid,  appPreferences.getDifficulty())){
                        db.disqualifyContestant(user.uid, appPreferences.getDifficulty(), getResources().getString(R.string.defecation_disqualification_reason));
+                       disqualified = true;
                     }
                     db.userScoresDao().updateUserScoresDefecation(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), true);
-                    db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
-                    viewManager.setTimerCurrentTime(0);
+                    stopTimerAndStopService();
+                    viewManager.setViewToFinishedState();
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    viewManager.setTimerCurrentTime(0);
+                    db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    if(disqualified){
+                        showDisqualificationDialog(getResources().getString(R.string.defecation_disqualification_reason));
+                    }
                 })
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
     }
 
+    public void showDisqualificationDialog(String reason) {
+        new MaterialAlertDialogBuilder(TimerActivity.this)
+                .setTitle(R.string.disqualification_dialog_title)
+                .setMessage(reason)
+                .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
+                    Intent intent = new Intent(this, AttemptSummaryActivity.class);
+                    startActivity(intent);
+                })
+                .show();
+    }
+
+    public void stopTimerAndStopService(){
+        TimerService.countDownTimer.cancel();
+        this.stopService(timerServiceIntent);
+    }
 }

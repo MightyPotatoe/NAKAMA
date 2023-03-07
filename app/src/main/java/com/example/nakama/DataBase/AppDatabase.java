@@ -93,6 +93,7 @@ public abstract class AppDatabase extends RoomDatabase {
         userScoresDao().updateScores(userScore);
     }
     public boolean checkAllRingsForAnyDefecation(int userId, String difficulty){
+        addUserScoreForAllRingsIfNotExists(userId, difficulty);
         UserScore userScoreForRing1 = userScoresDao().getUserScore(userId, difficulty, Dictionary.Rings.RING_1);
         UserScore userScoreForRing2 = userScoresDao().getUserScore(userId, difficulty, Dictionary.Rings.RING_2);
         UserScore userScoreForRing3 = userScoresDao().getUserScore(userId, difficulty, Dictionary.Rings.RING_3);

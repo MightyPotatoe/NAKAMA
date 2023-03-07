@@ -23,12 +23,14 @@ public class MainActivityScreen extends BaseScreen{
     public MainActivityScreen(ActivityScenario<MainActivity> scenario) {
         super(scenario);
     }
-    public void clickStartBasicModeButton(){
+    public TimerActivityScreen clickStartBasicModeButton(){
         Action.clickOnView(startBasicModeButton);
+        return new TimerActivityScreen(scenario);
     }
 
-    public void clickStartAdvancedModeButton(){
+    public TimerActivityScreen clickStartAdvancedModeButton(){
         Action.clickOnView(startAdvancedModeButton);
+        return new TimerActivityScreen(scenario);
     }
     public TimerActivityScreen confirmUserOverride(){
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));

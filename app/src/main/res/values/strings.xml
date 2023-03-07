@@ -41,8 +41,9 @@
     <string name="tread_dropped_limit_reached_dialog_title">Przekroczono dopuszczalny limit upuszczonych smaczków!</string>
     <string name="tread_dropped_limit_reached_dialog_message">Próba została zakończona. Użytkownik zakończył próbę z wynikiem 0 pkt i maksymalnym czasem.</string>
     <!--Disqualification reasons Resources-->
-    <string name="defecation_disqualification_reason">Załatwianie potrzeb fizjologicznych na więcej niż jednym ringu</string>
-
+    <string name="defecation_disqualification_reason">Załatwianie potrzeb fizjologicznych na więcej niż jednym ringu.</string>
+    <!--False alarm limit reached Dialog Resources-->
+    <string name="disqualification_dialog_title">Zawodnik zdyskwalifikowany!</string>
     <!--Main Activity Resources-->
     <string name="basic_level_title">Podstawowy</string>
     <string name="basic_level_description">Jedna próbka\n2:00 min czasu przeszukania </string>

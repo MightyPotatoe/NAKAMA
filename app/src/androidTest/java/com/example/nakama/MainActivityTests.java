@@ -36,12 +36,11 @@ public class MainActivityTests {
     @Test
     public void basic_difficulty_timer_should_be_launched_when_selected_and_no_user_score_in_db() {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        connectDb(scenario);
-        db.userScoresDao().delete();
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        mainActivityScreen.db.userScoresDao().delete();
 
-        onView(MainActivityScreen.startBasicModeButton).perform(click());
-        Assert.assertEquals("02:00:00", Action.getText(TimerActivityScreen.timerTextView));
-        scenario.close();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.clickStartBasicModeButton();
+        Assert.assertEquals("02:00:00", timerActivityScreen.getTimerText());
     }
 
     /**
@@ -53,11 +52,11 @@ public class MainActivityTests {
     @Test
     public void advanced_difficulty_timer_should_be_launched_when_selected_and_no_user_score_in_db() {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        connectDb(scenario);
-        connectToSharedPreferences(scenario);
-        db.userScoresDao().delete();
-        onView(MainActivityScreen.startAdvancedModeButton).perform(click());
-        Assert.assertEquals("04:00:00", Action.getText(TimerActivityScreen.timerTextView));
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        mainActivityScreen.db.userScoresDao().delete();
+
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.clickStartAdvancedModeButton();
+        Assert.assertEquals("04:00:00", timerActivityScreen.getTimerText());
         scenario.close();
     }
 
