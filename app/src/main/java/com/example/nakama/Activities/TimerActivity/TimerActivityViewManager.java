@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.nakama.DataBase.AppDatabase;
-import com.example.nakama.DataBase.Entities.UserScores.UserScores;
+import com.example.nakama.DataBase.Entities.UserScores.UserScore;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
 import com.example.nakama.Utils.Converter;
@@ -89,11 +89,11 @@ public class TimerActivityViewManager {
         userDetailsTextView.setText(displayedUserName);
 
         switch (difficulty){
-            case Dictionary.Difficulty.BASIC:
+            case Dictionary.Difficulty.Basic.NAME:
                 difficultyImageView.setImageResource(R.drawable.basic_level_icon);
                 changeLayoutColors(R.color.basic_difficulty_color);
                 break;
-            case Dictionary.Difficulty.ADVANCED:
+            case Dictionary.Difficulty.Advanced.NAME:
                 difficultyImageView.setImageResource(R.drawable.advanced_level_icon);
                 changeLayoutColors(R.color.advanced_difficulty_color);
                 break;
@@ -132,12 +132,12 @@ public class TimerActivityViewManager {
     }
 
     public void updateScores(AppDatabase db, Users user, String difficulty, String ring){
-        UserScores userScores = db.getUserScore(user.uid, difficulty, ring);
-        actualScoreTextView.setText(String.format(Locale.ENGLISH,"%d pkt", userScores.score));
-        falseAlarmsTextView.setText(String.valueOf(userScores.falseAlarms));
-        droppedTreatsTextView.setText(String.valueOf(userScores.treatDrop));
-        samplesFoundTextView.setText(String.valueOf(userScores.samplesFound));
-        if(userScores.defecation){
+        UserScore userScore = db.userScoresDao().getUserScore(user.uid, difficulty, ring);
+        actualScoreTextView.setText(String.format(Locale.ENGLISH,"%d pkt", userScore.score));
+        falseAlarmsTextView.setText(String.valueOf(userScore.falseAlarms));
+        droppedTreatsTextView.setText(String.valueOf(userScore.treatDrop));
+        samplesFoundTextView.setText(String.valueOf(userScore.samplesFound));
+        if(userScore.defecation){
             defecationTextView.setText("1");
         }
         else {

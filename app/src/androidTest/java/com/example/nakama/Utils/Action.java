@@ -30,7 +30,7 @@ public class Action {
         try{
             onView(view).perform(click());
         }
-        catch (Exception f) {
+        catch (Exception e) {
                 onView(view).inRoot(isDialog()).perform(click());
         }
     }

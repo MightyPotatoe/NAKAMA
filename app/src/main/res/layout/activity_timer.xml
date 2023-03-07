@@ -397,7 +397,8 @@
             android:id="@+id/timerDefecationButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/defecation_button" />
+            android:text="@string/defecation_button"
+            android:onClick="onDefecationButtonClick"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/timerDisqualificationButton"

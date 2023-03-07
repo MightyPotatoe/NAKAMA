@@ -1,22 +1,16 @@
 package com.example.nakama;
 
-import android.app.Activity;
-import android.content.Context;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.example.nakama.Activities.MainActivity.MainActivity;
-import com.example.nakama.Activities.TimerActivity.TimerActivity;
-import com.example.nakama.DataBase.AppDatabase;
+import com.example.nakama.DataBase.Entities.UserScores.UserScore;
+import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.Screens.MainActivityScreen;
+import com.example.nakama.Screens.RingResultActivityScreen;
 import com.example.nakama.Screens.TimerActivityScreen;
-import com.example.nakama.SharedPreferences.AppPreferences;
-import com.example.nakama.Utils.Validate;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.example.nakama.Utils.Converter;
+import com.example.nakama.Utils.Dictionary;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,28 +18,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class TimerActivityTests {
-
-    TextView textView;
-    CircularProgressIndicator circularProgressIndicator;
-    ImageButton playButton;
-    ImageButton pauseButton;
-    ImageButton restartButton;
-    ImageButton doneButton;
-    ActivityScenario<TimerActivity> scenario;
-
-    AppPreferences appPreferences;
-
-    AppDatabase db;
-    void initializeSettings(){
-        scenario = ActivityScenario.launch(TimerActivity.class);
-        scenario.onActivity(activity -> {
-            appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
-            appPreferences.setPollingFrequency(500);
-            appPreferences.setRingTime(10000);
-        });
-        scenario.recreate();
-        initializeView(scenario);
-    }
 
     /**
      * Check default activity state when entering base mode
@@ -287,94 +259,66 @@ public class TimerActivityTests {
         timerActivityScreen.validateTimer("00:00:00", 0);
     }
 
-    //-----------------TEST UTILS---------------------------------------
-    private <T extends Activity> void initializeView(ActivityScenario<T> scenario) {
-        scenario.onActivity(activity -> {
-            textView = activity.findViewById(R.id.timeTextView);
-            circularProgressIndicator = activity.findViewById(R.id.timeProgressBar);
-            playButton = activity.findViewById(R.id.playButton);
-            pauseButton = activity.findViewById(R.id.pauseButton);
-            restartButton = activity.findViewById(R.id.resetButton);
-            doneButton = activity.findViewById(R.id.doneButton);
-        });
-    }
+    /**
+     * When defecation is reported and there was no other accident on other rings - Contestant ends this ring with 0 points and maximum time.
+     */
+    @Test
+    public void defecation_should_increase_counter_and_stop_timer_with_zero_score() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        Users user = new Users("Tomasz", "Szymaniak", "Nala");
+        mainActivityScreen.db.addUser(user);
+        int userId = mainActivityScreen.db.getUserId(user);
+        mainActivityScreen.db.addUserScoreForAllRingsIfNotExists(userId, Dictionary.Difficulty.Advanced.NAME);
+        mainActivityScreen.db.clearUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_4);
 
-    public void validateDefaultActivityState() throws InterruptedException {
+        mainActivityScreen.clickStartAdvancedModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+
+        timerActivityScreen.clickPlayButton();
         Thread.sleep(1000);
-        Assert.assertEquals(View.VISIBLE, circularProgressIndicator.getVisibility());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertEquals(10000, circularProgressIndicator.getProgress());
-        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertEquals("00:10:00", textView.getText());
+        timerActivityScreen.clickDefecationButton();
+        timerActivityScreen.confirmDefecation();
+        timerActivityScreen.validateScores(0, 0, 1, 0, 0);
+        timerActivityScreen.validateTimer("00:00:00", 0);
+        timerActivityScreen.validateFinishedButtons();
     }
 
-    public void validateInProgressActivityState(){
-        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertNotEquals("00:10:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
-    }
+    /**
+     * When defecation was already reported on other rings - Contestant should be disqualified attemp is over and user is processed directly to sumuary screen for all rings.
+     */
+    @Test
+    public void defecation_should_disqualified_contestant_and_he_should_have_max_time_an_all_rings() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        Users user = new Users("Tomasz", "Szymaniak", "Nala");
+        int userId = mainActivityScreen.db.getUserId(user);
+        mainActivityScreen.db.addUserScoreForAllRingsIfNotExists(userId, Dictionary.Difficulty.Advanced.NAME);
+        mainActivityScreen.db.userScoresDao().updateUserScoresDefecation(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_4, true);
 
-    public void validateFinishedActivityState(){
-        Assert.assertEquals(View.INVISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertEquals("00:00:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertEquals(0, circularProgressIndicator.getProgress());
-    }
+        mainActivityScreen.clickStartAdvancedModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
 
-    public void validatePausedActivityState(){
-        Assert.assertEquals(View.VISIBLE, playButton.getVisibility());
-        Assert.assertEquals(View.INVISIBLE, pauseButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, restartButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, doneButton.getVisibility());
-        Assert.assertEquals(View.VISIBLE, textView.getVisibility());
-        Assert.assertNotEquals("00:10:00", textView.getText());
-        Assert.assertEquals(10000, circularProgressIndicator.getMax());
-        Assert.assertNotEquals(10000, circularProgressIndicator.getProgress());
-    }
+        timerActivityScreen.clickPlayButton();
+        Thread.sleep(1000);
+        timerActivityScreen.clickDefecationButton();
+        timerActivityScreen.confirmDefecation();
+        RingResultActivityScreen ringResultActivityScreen = timerActivityScreen.dismissDisqualificationDialog();
 
-    public void validateConfirmResetDialog(){
-        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
-        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_reset_dialog_message));
-        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
-        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
-    }
-
-    public void validateConfirmResetDialogIsGone(){
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_reset_dialog_message));
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
-    }
-
-    public void validateTimeoutDialog(){
-        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_title));
-        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_message));
-        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
-    }
-
-    public void validateTimeoutDialogIsGone(){
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_title));
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_message));
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
-    }
-
-    public void validateConfirmAttemptDialogIsGone(){
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.confirm_attempt_dialog_message));
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
-        Assert.assertFalse(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+        // TODO: 07.03.2023 This shoud finally lead to summary of all 4 rings! 
+        Assert.assertEquals("0 pkt.", ringResultActivityScreen.getSummaryPoints());
+        UserScore userScore1 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1);
+        UserScore userScore2 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_2);
+        UserScore userScore3 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_3);
+        UserScore userScore4 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_4);
+        Assert.assertEquals(0, userScore1.score);
+        Assert.assertEquals(0, userScore2.score);
+        Assert.assertEquals(0, userScore3.score);
+        Assert.assertEquals(0, userScore4.score);
+        Assert.assertEquals(Converter.millisToString(240000), userScore1.attemptTime);
+        Assert.assertEquals(Converter.millisToString(240000), userScore2.attemptTime);
+        Assert.assertEquals(Converter.millisToString(240000), userScore3.attemptTime);
+        Assert.assertEquals(Converter.millisToString(240000), userScore4.attemptTime);
+        Assert.assertEquals("Załatwianie potrzeb fizjologicznych na więcej niż jednym ringu.", userScore1.disqualification_reason);
     }
 }

@@ -17,10 +17,11 @@ public class TimerService extends Service {
     public static final String POLLING_FREQUENCY = "POLLING_FREQUENCY";
 
     //---TIMER----
-    private static CountDownTimer countDownTimer;
+    public static CountDownTimer countDownTimer;
     public static String TIMER_ACTION = "TIMER_ACTION";
     public static String BROADCAST_TIMER_VALUE = "TIMER_VALUE";
 
+    public static boolean forcedFinish = false;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -37,6 +38,7 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         isServiceRunning = true;
+        forcedFinish = false;
         Log.v("SERVICE DEBUG:", "Timer service started");
         //Assigning data passed by intent
         int currentStepTime = intent.getIntExtra(TIME, 120);

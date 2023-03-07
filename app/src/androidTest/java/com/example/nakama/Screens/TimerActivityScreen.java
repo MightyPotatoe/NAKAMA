@@ -14,7 +14,7 @@ import android.view.View;
 import androidx.test.core.app.ActivityScenario;
 
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
-import com.example.nakama.DataBase.Entities.UserScores.UserScores;
+import com.example.nakama.DataBase.Entities.UserScores.UserScore;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
 import com.example.nakama.SharedPreferences.AppPreferences;
@@ -50,7 +50,10 @@ public class TimerActivityScreen extends BaseScreen{
     public static Matcher<View> pauseButton =  withId(R.id.pauseButton);
     public static Matcher<View> resetButton =  withId(R.id.resetButton);
     public static Matcher<View> doneButton =  withId(R.id.doneButton);
-
+    public TimerActivityScreen(ActivityScenario<?> scenario) {
+        super(scenario);
+        scenario.onActivity(activity -> appPreferences.setPollingFrequency(500));
+    }
     public TimerActivityScreen(ActivityScenario<?> scenario, int time) {
         super(scenario);
         scenario.onActivity(activity -> {
@@ -95,6 +98,9 @@ public class TimerActivityScreen extends BaseScreen{
     public void clickTreatDroppedButton() {
         Action.clickOnView(droppedTreatButton);
     }
+    public void clickDefecationButton() {
+        Action.clickOnView(defecationButton);
+    }
 
     public void confirmFalseAlarm() {
         validateFalseAlarmConfirmationDialog();
@@ -107,6 +113,10 @@ public class TimerActivityScreen extends BaseScreen{
     }
     public void confirmTreatDropped(){
         validateTreatDroppedConfirmationDialog();
+        Action.clickByText(R.string.dialog_positive_yes_button);
+    }
+    public void confirmDefecation(){
+        validateDefecationConfirmationDialog();
         Action.clickByText(R.string.dialog_positive_yes_button);
     }
 
@@ -137,8 +147,14 @@ public class TimerActivityScreen extends BaseScreen{
         Action.clickByText(R.string.dialog_positive_ok_button);
     }
 
-    public void validateScores(int score, int falseAlarms, int defecations, int droppedTreats, int samplesFound){
-        UserScores userScore = db.getUserScore(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing());
+    public RingResultActivityScreen dismissDisqualificationDialog(){
+        validateDisqualificationDialog();
+        Action.clickByText(R.string.dialog_positive_ok_button);
+        return new RingResultActivityScreen(scenario);
+    }
+
+    public void validateScores(int score, int falseAlarms, int defecation, int droppedTreats, int samplesFound){
+        UserScore userScore = db.userScoresDao().getUserScore(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing());
 
         Assert.assertEquals(score, userScore.score);
         Assert.assertEquals(String.format("%d pkt", score), Action.getText(scoreTextView));
@@ -146,11 +162,11 @@ public class TimerActivityScreen extends BaseScreen{
         Assert.assertEquals(String.valueOf(falseAlarms), Action.getText(falseAlarmsTextView));
         Assert.assertEquals(falseAlarms, userScore.falseAlarms);
 
-        if(defecations == 1){
+        if(defecation == 1){
             Assert.assertTrue(userScore.defecation);
             Assert.assertEquals("1", Action.getText(defecationTextView));
         }
-        else if(defecations == 0){
+        else if(defecation == 0){
             Assert.assertFalse(userScore.defecation);
             Assert.assertEquals("0", Action.getText(defecationTextView));
         }
@@ -197,6 +213,12 @@ public class TimerActivityScreen extends BaseScreen{
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
     }
+    public void validateDefecationConfirmationDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_defecation_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+    }
     public void validateTreatDroppedLimitReachedDialog(){
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.tread_dropped_limit_reached_dialog_title));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.tread_dropped_limit_reached_dialog_message));
@@ -213,7 +235,11 @@ public class TimerActivityScreen extends BaseScreen{
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_message));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
     }
-
+    public void validateDisqualificationDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.disqualification_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.defecation_disqualification_reason));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
+    }
 
     public String getTimerText(){
         return Action.getText(timerTextView);
