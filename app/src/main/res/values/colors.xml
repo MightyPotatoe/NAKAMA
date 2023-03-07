@@ -188,4 +188,6 @@
 
     <color name="advanced_difficulty_color">#0387C6</color>
     <color name="basic_difficulty_color">#17AF8A</color>
+    <color name="light_warning">#9FFF9800</color>
+
 </resources>

@@ -21,6 +21,8 @@ public class UserScores {
     @ColumnInfo(name = "ring")
     public String ring;
 
+    @ColumnInfo(name = "samples_found")
+    public int samplesFound;
     @ColumnInfo(name = "attempt_time")
     public String attemptTime;
 
@@ -49,5 +51,6 @@ public class UserScores {
         defecation = false;
         score = 200;
         overview = null;
+        samplesFound = 0;
     }
 }

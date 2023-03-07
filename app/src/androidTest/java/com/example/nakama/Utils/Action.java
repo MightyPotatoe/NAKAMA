@@ -8,6 +8,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.test.espresso.UiController;
@@ -19,6 +20,9 @@ public class Action {
 
     public static void clickById(int id){
         onView(withId(id)).perform(click());
+    }
+    public static void clickOnView(Matcher<View> view){
+        onView(view).perform(click());
     }
 
     public static void clickByText(int id){
@@ -50,5 +54,49 @@ public class Action {
             }
         });
         return stringHolder[0];
+    }
+
+    public static Integer getProgress(final Matcher<View> matcher) {
+        final Integer[] progress = {null};
+        onView(matcher).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isAssignableFrom(ProgressBar.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return "getting progress from a ProgressBar";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ProgressBar pb = (ProgressBar)view; //Save, because of check in getConstraints()
+                progress[0] = pb.getProgress();
+            }
+        });
+        return progress[0];
+    }
+
+    public static Integer getMax(final Matcher<View> matcher) {
+        final Integer[] max = {null};
+        onView(matcher).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isAssignableFrom(ProgressBar.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return "getting progress from a ProgressBar";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ProgressBar pb = (ProgressBar)view; //Save, because of check in getConstraints()
+                max[0] = pb.getMax();
+            }
+        });
+        return max[0];
     }
 }

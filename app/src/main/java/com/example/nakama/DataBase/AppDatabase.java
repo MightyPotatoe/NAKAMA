@@ -16,7 +16,7 @@ import com.example.nakama.DataBase.Entities.Users.UsersDao;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-@Database(entities = {UserScores.class, Users.class},  version = 3)
+@Database(entities = {UserScores.class, Users.class},  version = 4)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
@@ -79,6 +79,10 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public void clearUserScore(int userId, String difficulty, String ring){
-        userScoresDao().updateUserScores(userId, difficulty, ring, null, 0,0, false, 200, null);
+        userScoresDao().updateUserScores(userId, difficulty, ring, null, 0,0, false, 200, null, 0);
+    }
+
+    public UserScores getUserScore(int userId, String difficulty, String ring){
+        return userScoresDao().getUserScores(userId, difficulty, ring).get(0);
     }
 }

@@ -1,16 +1,209 @@
 package com.example.nakama.Screens;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isNotEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import static org.hamcrest.core.IsNot.not;
+
+import android.content.Context;
 import android.view.View;
 
+import androidx.test.core.app.ActivityScenario;
+
+import com.example.nakama.Activities.TimerActivity.TimerActivity;
+import com.example.nakama.DataBase.Entities.UserScores.UserScores;
 import com.example.nakama.R;
+import com.example.nakama.SharedPreferences.AppPreferences;
+import com.example.nakama.Utils.Action;
+import com.example.nakama.Utils.Converter;
+import com.example.nakama.Utils.Validate;
 
 import org.hamcrest.Matcher;
+import org.junit.Assert;
 
-public class TimerActivityScreen {
+public class TimerActivityScreen extends BaseScreen{
+
     public static Matcher<View> timerTextView =  withId(R.id.timeTextView);
     public static Matcher<View> usernameTextView =  withId(R.id.timerUserDetailsTextView);
     public static Matcher<View> difficultyTextView =  withId(R.id.timerDifficultyTextView);
     public static Matcher<View> ringTextView =  withId(R.id.timerRingDetailsTextView);
+    public static Matcher<View> scoreTextView = withId(R.id.timerScore);
+    public static Matcher<View> falseAlarmsTextView =  withId(R.id.timerFalseAlarmCounter);
+    public static Matcher<View> samplesFoundTextView =  withId(R.id.timerSamplesFound);
+    public static Matcher<View> defecationTextView =  withId(R.id.timerDefecationCounter);
+    public static Matcher<View> droppedTreatTextView =  withId(R.id.timerDroppedTreatsCounter);
+    private Matcher<View> progressBar =  withId(R.id.timeProgressBar);
+
+    //----Action Buttons---
+    public static Matcher<View> falseAlarmButton =  withId(R.id.timerFalseAlarmButton);
+    public static Matcher<View> positiveAlarmButton =  withId(R.id.timerPositiveAlarmButton);
+    public static Matcher<View> droppedTreatButton =  withId(R.id.timerDroppedTreatButton);
+    public static Matcher<View> defecationButton =  withId(R.id.timerDefecationButton);
+    public static Matcher<View> disqualifiedButton =  withId(R.id.timerDisqualificationButton);
+
+    //----Timer Buttons---
+    public static Matcher<View> playButton =  withId(R.id.playButton);
+    public static Matcher<View> pauseButton =  withId(R.id.pauseButton);
+    public static Matcher<View> resetButton =  withId(R.id.resetButton);
+    public static Matcher<View> doneButton =  withId(R.id.doneButton);
+
+    public TimerActivityScreen(ActivityScenario<?> scenario, int time) {
+        super(scenario);
+        scenario.onActivity(activity -> {
+            appPreferences.setPollingFrequency(500);
+            appPreferences.setRingTime(time);
+        });
+    }
+
+    public TimerActivityScreen(int timer, int pollingFrequency){
+        super(ActivityScenario.launch(TimerActivity.class));
+        scenario.onActivity(activity -> {
+            appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
+            appPreferences.setPollingFrequency(pollingFrequency);
+            appPreferences.setRingTime(timer);
+        });
+        scenario.recreate();
+    }
+
+    public void clickPlayButton(){
+        Action.clickOnView(playButton);
+    }
+
+    public void clickPauseButton(){
+        Action.clickOnView(pauseButton);
+    }
+
+    public void clickFalseAlarm(){
+        Action.clickOnView(falseAlarmButton);
+    }
+
+    public void clickPositiveAlarm(){
+        Action.clickOnView(positiveAlarmButton);
+    }
+
+    public void confirmFalseAlarm(){
+        validateFalseAlarmConfirmationDialog();
+        Action.clickByText(R.string.dialog_positive_yes_button);
+    }
+
+    public void confirmPositiveAlarm(){
+        validatePositiveAlarmConfirmationDialog();
+        Action.clickByText(R.string.dialog_positive_yes_button);
+    }
+
+    public void dismissFalseAlarmLimitReachedDialog(){
+        validateFalseAlarmLimitReachedDialog();
+        Action.clickByText(R.string.dialog_positive_ok_button);
+    }
+
+    public void dismissAllSamplesFoundDialog(){
+        validateAllSamplesFoundDialog();
+        Action.clickByText(R.string.dialog_positive_ok_button);
+    }
+
+    public void validateScores(int score, int falseAlarms, int defecations, int droppedTreats, int samplesFound){
+        UserScores userScore = db.getUserScore(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing());
+
+        Assert.assertEquals(score, userScore.score);
+        Assert.assertEquals(String.format("%d pkt", score), Action.getText(scoreTextView));
+
+        Assert.assertEquals(String.valueOf(falseAlarms), Action.getText(falseAlarmsTextView));
+        Assert.assertEquals(falseAlarms, userScore.falseAlarms);
+
+        if(defecations == 1){
+            Assert.assertTrue(userScore.defecation);
+            Assert.assertEquals("1", Action.getText(defecationTextView));
+        }
+        else if(defecations == 0){
+            Assert.assertFalse(userScore.defecation);
+            Assert.assertEquals("0", Action.getText(defecationTextView));
+        }
+
+        Assert.assertEquals(String.valueOf(droppedTreats), Action.getText(droppedTreatTextView));
+        Assert.assertEquals(droppedTreats, userScore.treatDrop);
+
+        Assert.assertEquals(String.valueOf(samplesFound), Action.getText(samplesFoundTextView));
+        Assert.assertEquals(samplesFound, userScore.samplesFound);
+    }
+
+    public void validateTimer(String timerValue, int progressBarProgress){
+        Assert.assertEquals(timerValue, Action.getText(timerTextView));
+        Assert.assertEquals(Integer.valueOf(progressBarProgress), Action.getProgress(progressBar));
+    }
+
+    public void validateFalseAlarmConfirmationDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_false_alarm_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+    }
+
+    public void validatePositiveAlarmConfirmationDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_positive_alarm_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+    }
+
+    public void validateFalseAlarmLimitReachedDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.false_alarms_reached_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.false_alarms_reached_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
+    }
+
+    public void validateAllSamplesFoundDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.all_samples_found_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.all_samples_found_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
+    }
+
+    public String getTimerText(){
+        return Action.getText(timerTextView);
+    }
+
+    public void validateDefaultStateTimerButtons(){
+        onView(playButton).check(matches(isDisplayed()));
+        onView(pauseButton).check(matches(not(isDisplayed())));
+        onView(resetButton).check(matches(not(isDisplayed())));
+        onView(doneButton).check(matches(not(isDisplayed())));
+    }
+
+    public void validateInProgressStateTimerButtons(){
+        onView(playButton).check(matches(not(isDisplayed())));
+        onView(pauseButton).check(matches(isDisplayed()));
+        onView(resetButton).check(matches(not(isDisplayed())));
+        onView(doneButton).check(matches(not(isDisplayed())));
+    }
+
+    public void validateInPausedStateTimerButtons(){
+        onView(playButton).check(matches(isDisplayed()));
+        onView(pauseButton).check(matches(not(isDisplayed())));
+        onView(resetButton).check(matches(isDisplayed()));
+        onView(doneButton).check(matches(isDisplayed()));
+    }
+    public void validateTimer(int expectedTime){
+        Assert.assertEquals(Integer.valueOf(expectedTime), Action.getMax(progressBar));
+        Assert.assertEquals(Integer.valueOf(expectedTime), Action.getProgress(progressBar));
+        Assert.assertEquals(Converter.millisToString(expectedTime), Action.getText(timerTextView));
+    }
+
+    public void validateIfActionButtonsAreDisabled(){
+        onView(falseAlarmButton).check(matches(isNotEnabled()));
+        onView(positiveAlarmButton).check(matches(isNotEnabled()));
+        onView(droppedTreatButton).check(matches(isNotEnabled()));
+        onView(defecationButton).check(matches(isNotEnabled()));
+        onView(disqualifiedButton).check(matches(isNotEnabled()));
+    }
+
+    public void validateIfActionButtonsAreEnabled(){
+        onView(falseAlarmButton).check(matches(isEnabled()));
+        onView(positiveAlarmButton).check(matches(isEnabled()));
+        onView(droppedTreatButton).check(matches(isEnabled()));
+        onView(defecationButton).check(matches(isEnabled()));
+        onView(disqualifiedButton).check(matches(isEnabled()));
+    }
 }

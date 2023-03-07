@@ -8,12 +8,11 @@ public class AppPreferences extends SharedPreferencesEditor{
 
     private final String RING_TIME = "RING_TIME";
     private final String POLLING_FREQUENCY = "POLLING_FREQUENCY";
-
     private final String USER_ID = "USER_ID";
-
     private final String ACTIVE_RING = "RING";
-
     private final String DIFFICULTY = "DIFFICULTY";
+    private final String FALSE_ALARMS_LIMIT = "FALSE_ALARMS_LIMIT";
+    private final String SAMPLES_IN_RUN = "SAMPLES_IN_RUN";
 
     public AppPreferences(SharedPreferences sharedPreferences) {
         super(sharedPreferences);
@@ -56,4 +55,19 @@ public class AppPreferences extends SharedPreferencesEditor{
         return sharedPreferences.getString(DIFFICULTY, null);
     }
 
+    public void setFalseAlarmsLimit(int limit){
+        putInt(FALSE_ALARMS_LIMIT, limit);
+    }
+
+    public int getFalseAlarmsLimit(){
+        return sharedPreferences.getInt(FALSE_ALARMS_LIMIT, 1);
+    }
+
+    public void setSamplesInRun(int samples){
+        putInt(SAMPLES_IN_RUN, samples);
+    }
+
+    public int getSamplesInRun(){
+        return sharedPreferences.getInt(SAMPLES_IN_RUN, 1);
+    }
 }
