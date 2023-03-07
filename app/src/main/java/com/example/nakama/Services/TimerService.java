@@ -77,4 +77,9 @@ public class TimerService extends Service {
     public static void pauseTimer(){
         countDownTimer.cancel();
     }
+
+    public static void cancelTimer(){
+        forcedFinish = true;
+        countDownTimer.cancel();
+    }
 }

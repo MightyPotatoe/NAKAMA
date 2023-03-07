@@ -4,7 +4,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 
 import android.app.Activity;
-import android.content.Context;
 
 import androidx.test.core.app.ActivityScenario;
 
@@ -77,17 +76,17 @@ public class MainActivityTests {
     @Test
     public void basic_difficulty_timer_should_be_launched_when_selected() {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        connectDb(scenario);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
         Users user = new Users("Tomasz", "Szymaniak", "Nala");
-        int userId = db.getUserId(user);
-        db.addUserScoreIfNotExists(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
-        db.userScoresDao().updateScores(new UserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1, 75, "01:00:00", 1, true, 1,  0, "Ok", null));
-        UserScore userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
+        int userId = mainActivityScreen.db.getUserId(user);
+        mainActivityScreen.db.addUserScoreIfNotExists(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
+        mainActivityScreen.db.userScoresDao().updateScores(new UserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1, 75, "01:00:00", 1, true, 1,  0, "Ok", null));
+        UserScore userScore = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
         Assert.assertEquals(userScore.attemptTime, "01:00:00");
 
-        onView(MainActivityScreen.startBasicModeButton).perform(click());
-        validateConfirmOverrideDialog();
-        Action.clickByText(R.string.dialog_negative_button);
+        mainActivityScreen.clickStartBasicModeButton();
+        mainActivityScreen.dismissUserOverride();
+
         userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
         Assert.assertEquals("01:00:00", userScore.attemptTime);
         Assert.assertEquals(1, userScore.falseAlarms);
@@ -96,12 +95,9 @@ public class MainActivityTests {
         Assert.assertEquals(75, userScore.score);
         Assert.assertEquals("Ok", userScore.overview);
 
-        Assert.assertTrue(Validate.isElementDisplayedById(R.id.card_view));
-
-        onView(MainActivityScreen.startBasicModeButton).perform(click());
-        validateConfirmOverrideDialog();
-        Action.clickByText(R.string.dialog_positive_yes_button);
-        Assert.assertEquals("02:00:00", Action.getText(TimerActivityScreen.timerTextView));
+        mainActivityScreen.clickStartBasicModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+        Assert.assertEquals("02:00:00", timerActivityScreen.getTimerText());
 
         userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
         Assert.assertNull(userScore.attemptTime);
@@ -110,10 +106,10 @@ public class MainActivityTests {
         Assert.assertFalse(userScore.defecation);
         Assert.assertEquals(200, userScore.score);
         Assert.assertNull(userScore.overview);
-        Assert.assertEquals("Poziom Podstawowy",Action.getText(TimerActivityScreen.difficultyTextView));
-        Assert.assertEquals("Ring 1",Action.getText(TimerActivityScreen.ringTextView));
-        Assert.assertEquals("Tomasz Szymaniak i Nala",Action.getText(TimerActivityScreen.usernameTextView));
-        scenario.close();
+
+        Assert.assertEquals("Poziom Podstawowy",timerActivityScreen.getDifficultyTopBarText());
+        Assert.assertEquals("Ring 1",timerActivityScreen.gerRingTopBarText());
+        Assert.assertEquals("Tomasz Szymaniak i Nala",timerActivityScreen.getUsernameTopBarText());
     }
 
     /**
@@ -180,9 +176,5 @@ public class MainActivityTests {
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
-    }
-
-    private <T extends Activity> void connectToSharedPreferences(ActivityScenario<T> scenario) {
-        scenario.onActivity(activity -> appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE)));
     }
 }

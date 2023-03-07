@@ -26,6 +26,9 @@
     <string name="confirm_treat_dropped_dialog_message">Czy na pewno odnotować upuszczenie smakołyka na ring?</string>
     <!--Confirm defecation Resources-->
     <string name="confirm_defecation_dialog_message">Czy na pewno odnotować załatwianie potrzeb fizjologicznych na ringu?</string>
+    <!--Confirm disqualification Resources-->
+    <string name="confirm_disqualification_dialog_message">Czy na pewno chcesz zdyskwalifikować zawodnika?</string>
+    <string name="provide_disqualification_reason_dialog_message">Wprowadź powód dyskwalifikacji i klinij \'Ok\'</string>
     <!--Confirm new attempt Dialog Resources-->
     <string name="confirm_new_attempt_dialog_message">Czy na pewno chcesz rozpocząć następne podejście?</string>
     <string name="scored_points_label">Zdobyte punkty:</string>
@@ -59,5 +62,6 @@
     <string name="defecation_button">Sikupa</string>
     <string name="disqualification_button">Dyskwalifikacja</string>
     <string name="samples_found_label">Znalezione próbki:</string>
+    <string name="disqualification_reason_label">Powód dyskwalifikacji</string>
 
 </resources>

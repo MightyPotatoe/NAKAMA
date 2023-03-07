@@ -32,11 +32,26 @@ public class MainActivityScreen extends BaseScreen{
         Action.clickOnView(startAdvancedModeButton);
         return new TimerActivityScreen(scenario);
     }
+    public TimerActivityScreen confirmUserOverride(int time){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+        Action.clickByText(R.string.dialog_positive_yes_button);
+        return new TimerActivityScreen(scenario, time);
+    }
+
     public TimerActivityScreen confirmUserOverride(){
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
         Action.clickByText(R.string.dialog_positive_yes_button);
-        return new TimerActivityScreen(scenario, 5000);
+        return new TimerActivityScreen(scenario);
+    }
+
+    public void dismissUserOverride(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+        Action.clickByText(R.string.dialog_negative_button);
     }
 }
