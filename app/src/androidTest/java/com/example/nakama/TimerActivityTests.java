@@ -1,10 +1,5 @@
 package com.example.nakama;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
@@ -20,7 +15,6 @@ import com.example.nakama.DataBase.AppDatabase;
 import com.example.nakama.Screens.MainActivityScreen;
 import com.example.nakama.Screens.TimerActivityScreen;
 import com.example.nakama.SharedPreferences.AppPreferences;
-import com.example.nakama.Utils.Action;
 import com.example.nakama.Utils.Validate;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -78,7 +72,7 @@ public class TimerActivityTests {
         Assert.assertEquals("00:10:00", beginningTime);
 
         timerActivityScreen.clickPlayButton();
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         Assert.assertNotEquals(beginningTime, timerActivityScreen.getTimerText());
         timerActivityScreen.validateIfActionButtonsAreEnabled();
         timerActivityScreen.validateInProgressStateTimerButtons();
@@ -87,119 +81,99 @@ public class TimerActivityTests {
         timerActivityScreen.validateIfActionButtonsAreEnabled();
         timerActivityScreen.validateInPausedStateTimerButtons();
         String currentTime = timerActivityScreen.getTimerText();
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         Assert.assertEquals(currentTime, timerActivityScreen.getTimerText());
 
         timerActivityScreen.clickPlayButton();
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         Assert.assertNotEquals(currentTime, timerActivityScreen.getTimerText());
         timerActivityScreen.validateIfActionButtonsAreEnabled();
         timerActivityScreen.validateInProgressStateTimerButtons();
     }
 
     /**
-     * Given user is on MainActivity
-     * And timer is set to 10 seconds
-     * When user press 'play' button and waits 2s
-     * And user press 'pause'
-     * And user press 'reset'
-     * Then confirm dialog should be displayed
-     * When user confirms choice in dialog
-     * Then following elements are displayed:
-     * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
-     * | Time Progress Bar | VISIBLE    |          |10000 | 10000    |
-     * | Play button       | VISIBLE    |          |      |          |
-     * | Pause button      | INVISIBLE  |          |      |          |
-     * | Reset button      | INVISIBLE  |          |      |          |
-     * | Done button       | INVISIBLE  |          |      |          |
-     * | Time TextView     | VISIBLE    | 00:10:00 |      |          |
-     * When user press 'play' button and until timer is finished
-     * And user dismiss timeout dialog
-     * And user press 'reset'
-     * Then confirm dialog should be displayed
-     * When user confirms choice in dialog
-     * Then following elements are displayed:
-     * | ELEMENT           | VISIBILITY | TEXT     |MAX   | PROGRESS |
-     * | Time Progress Bar | VISIBLE    |          |10000 | 10000    |
-     * | Play button       | VISIBLE    |          |      |          |
-     * | Pause button      | INVISIBLE  |          |      |          |
-     * | Reset button      | INVISIBLE  |          |      |          |
-     * | Done button       | INVISIBLE  |          |      |          |
-     * | Time TextView     | VISIBLE    | 00:10:00 |      |          |
+     * When timer is paused or finished pressing reset button should reset activity to default state.
+     * Covers: On Finish state
      */
     @Test
     public void timer_should_be_reset_when_reset_button_is_pressed_and_choice_is_confirmed() throws InterruptedException {
-        initializeSettings();
-        validateDefaultActivityState();
-        //Click start and wait 2s
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(2000);
-        validateInProgressActivityState();
-        onView(withId(R.id.pauseButton)).perform(click());
-        validatePausedActivityState();
+        TimerActivityScreen timerActivityScreen = new TimerActivityScreen(5000, 500);
+        String beginningTime = timerActivityScreen.getTimerText();
+        timerActivityScreen.validateTimer(5000);
 
-        //Click reset when paused
-        onView(withId(R.id.resetButton)).perform(click());
-        //Validate if dialog is displayed
-        validateConfirmResetDialog();
-        //Accept dialog
-        onView(withText(R.string.dialog_positive_yes_button)).perform(click());
-        validateConfirmResetDialogIsGone();
-        validateDefaultActivityState();
+        timerActivityScreen.clickPlayButton();
+        Thread.sleep(1000);
+        Assert.assertNotEquals(beginningTime, timerActivityScreen.getTimerText());
+        timerActivityScreen.clickFalseAlarm();
+        timerActivityScreen.confirmFalseAlarm();
+        timerActivityScreen.clickTreatDroppedButton();
+        timerActivityScreen.confirmTreatDropped();
+        timerActivityScreen.validateScores(120, 1, 0, 1, 0);
+
+        timerActivityScreen.clickPauseButton();
+        timerActivityScreen.validateInPausedStateTimerButtons();
+        Assert.assertNotEquals(beginningTime, timerActivityScreen.getTimerText());
+
+        timerActivityScreen.clickResetButtonButton();
+        timerActivityScreen.confirmReset();
+        timerActivityScreen.validateScores(200, 0, 0, 0, 0);
+        timerActivityScreen.validateDefaultStateTimerButtons();
+        timerActivityScreen.validateIfActionButtonsAreDisabled();
+        timerActivityScreen.validateTimer(5000);
 
         //Click play and wait for timer to be finished
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(10000);
-        //Close timeout dialog
-        Action.clickByText(R.string.dialog_positive_ok_button);
-        //Click reset when finished
-        onView(withId(R.id.resetButton)).perform(click());
-        //Validate if dialog is displayed
-        validateConfirmResetDialog();
-        //Accept dialog
-        onView(withText(R.string.dialog_positive_yes_button)).perform(click());
-        validateConfirmResetDialogIsGone();
-        validateDefaultActivityState();
+        timerActivityScreen.clickPlayButton();
+        timerActivityScreen.clickFalseAlarm();
+        timerActivityScreen.confirmFalseAlarm();
+        timerActivityScreen.clickPositiveAlarm();
+        timerActivityScreen.confirmPositiveAlarm();
+        timerActivityScreen.clickTreatDroppedButton();
+        timerActivityScreen.confirmTreatDropped();
+        timerActivityScreen.validateScores(120, 1, 0, 1, 1);
+        Thread.sleep(5000);
+        timerActivityScreen.dismissTimeoutDialog();
+        timerActivityScreen.validateTimer(0);
+        timerActivityScreen.validateFinishedButtons();
+        //Reset
+        timerActivityScreen.clickResetButtonButton();
+        timerActivityScreen.confirmReset();
+        timerActivityScreen.validateScores(200, 0, 0, 0, 0);
+        timerActivityScreen.validateDefaultStateTimerButtons();
+        timerActivityScreen.validateIfActionButtonsAreDisabled();
+        timerActivityScreen.validateTimer(5000);
     }
 
     /**
-     * Given user is on MainActivity
-     * And timer is set to 10 seconds
-     * When user press 'play' button and waits until timer is finished
-     * Then timeout dialog is displayed
-     * When user clicks dialog accept button
-     * Then timeout dialog is closed displayed
+     * When timer is paused and pressing reset button is pressed and confirmation is canceled timer should not be reseted.
      */
     @Test
-    public void dialogShouldBeDisplayedWhenTimerIsFinished() throws InterruptedException {
-        initializeSettings();
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(10000);
-        validateTimeoutDialog();
-        onView(withText(R.string.dialog_positive_ok_button)).perform(click());
-        validateTimeoutDialogIsGone();
-    }
-
-    @Test
     public void reset_dialog_should_be_dismissed_when_no_is_clicked_and_timer_should_not_be_reset() throws InterruptedException {
-        initializeSettings();
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(2000);
-        onView(withId(R.id.pauseButton)).perform(click());
-        onView(withId(R.id.resetButton)).perform(click());
-        validateConfirmResetDialog();
-        onView(withText(R.string.dialog_negative_button)).perform(click());
-        validateConfirmResetDialogIsGone();
-        validatePausedActivityState();
-        //continue and reset when finished
-        onView(withId(R.id.playButton)).perform(click());
-        Thread.sleep(10000);
-        onView(withText(R.string.dialog_positive_ok_button)).perform(click());
-        onView(withId(R.id.resetButton)).perform(click());
-        validateConfirmResetDialog();
-        onView(withText(R.string.dialog_negative_button)).perform(click());
-        validateConfirmResetDialogIsGone();
-        validateFinishedActivityState();
+        TimerActivityScreen timerActivityScreen = new TimerActivityScreen(5000, 500);
+        String beginningTime = timerActivityScreen.getTimerText();
+        timerActivityScreen.validateTimer(5000);
+
+        timerActivityScreen.clickPlayButton();
+        Thread.sleep(1000);
+        Assert.assertNotEquals(beginningTime, timerActivityScreen.getTimerText());
+        timerActivityScreen.clickFalseAlarm();
+        timerActivityScreen.confirmFalseAlarm();
+        timerActivityScreen.clickPositiveAlarm();
+        timerActivityScreen.confirmPositiveAlarm();
+        timerActivityScreen.clickTreatDroppedButton();
+        timerActivityScreen.confirmTreatDropped();
+
+        timerActivityScreen.clickPauseButton();
+        timerActivityScreen.validateScores(120, 1, 0, 1, 1);
+        timerActivityScreen.validateInPausedStateTimerButtons();
+        Assert.assertNotEquals(beginningTime, timerActivityScreen.getTimerText());
+        String currentTime = timerActivityScreen.getTimerText();
+
+        timerActivityScreen.clickResetButtonButton();
+        timerActivityScreen.cancelReset();
+        timerActivityScreen.validateScores(120, 1, 0, 1, 1);
+        timerActivityScreen.validateInPausedStateTimerButtons();
+        Assert.assertNotEquals(beginningTime, timerActivityScreen.getTimerText());
+        Assert.assertEquals(currentTime, timerActivityScreen.getTimerText());
     }
 
 
@@ -261,6 +235,56 @@ public class TimerActivityTests {
         Thread.sleep(1000);
         String timeAfterWait = timerActivityScreen.getTimerText();
         Assert.assertEquals(timeAfterWait, currentTime);
+    }
+
+    /**
+     * Treat dropped counter should be incremented. When limit is reached timer should be set to 0 and 0 score should be applied. - Basic difficulty
+     */
+    @Test
+    public void treat_dropped_button_should_increase_counter_and_stop_when_limit_reached_with_zero_score_basic() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        mainActivityScreen.clickStartBasicModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+
+        timerActivityScreen.clickPlayButton();
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickTreatDroppedButton();
+        timerActivityScreen.confirmTreatDropped();
+        timerActivityScreen.validateScores(170, 0, 0, 1, 0);
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickTreatDroppedButton();
+        timerActivityScreen.confirmTreatDropped();
+        timerActivityScreen.dismissTreatDroppedLimitReachedDialog();
+        timerActivityScreen.validateScores(0, 0, 0, 2, 0);
+        timerActivityScreen.validateTimer("00:00:00", 0);
+    }
+
+    /**
+     * Treat dropped counter should be incremented. When limit is reached timer should be set to 0 and 0 score should be applied. - Advanced difficulty
+     */
+    @Test
+    public void treat_dropped_button_should_increase_counter_and_stop_when_limit_reached_with_zero_score_advanced() throws InterruptedException {
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(scenario);
+        mainActivityScreen.clickStartAdvancedModeButton();
+        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+
+        timerActivityScreen.clickPlayButton();
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickTreatDroppedButton();
+        timerActivityScreen.confirmTreatDropped();
+        timerActivityScreen.validateScores(170, 0, 0, 1, 0);
+
+        Thread.sleep(1000);
+        timerActivityScreen.clickTreatDroppedButton();
+        timerActivityScreen.confirmTreatDropped();
+        timerActivityScreen.dismissTreatDroppedLimitReachedDialog();
+        timerActivityScreen.validateScores(0, 0, 0, 2, 0);
+        timerActivityScreen.validateTimer("00:00:00", 0);
     }
 
     //-----------------TEST UTILS---------------------------------------

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showConfirmClearingAttemptDialog(int userId, String difficulty, String ring) {
         Users user = db.getUser(userId);
-        String message = String.format("Użytkownik '%s %s' startujący z pesem '%s' posiada już wpis dla ringu '%s' na poziomie trudności '%s'.\n\nCzy jesteś pewien, że chcesz go nadpisać?\n\nWszystkie dotychczasowe dane zostaną utracone", user.userName, user.usersSurname, user.dogName, ring, difficulty);
+        String message = String.format("Użytkownik '%s %s' startujący z psem '%s' posiada już wpis dla ringu '%s' na poziomie trudności '%s'.\n\nCzy jesteś pewien, że chcesz go nadpisać?\n\nWszystkie dotychczasowe dane zostaną utracone", user.userName, user.usersSurname, user.dogName, ring, difficulty);
         new MaterialAlertDialogBuilder(MainActivity.this)
                 .setTitle(R.string.confirm_dialog_title)
                 .setMessage(message)

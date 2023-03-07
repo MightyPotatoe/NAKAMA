@@ -6,7 +6,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-
 import static org.hamcrest.core.IsNot.not;
 
 import android.content.Context;
@@ -16,6 +15,7 @@ import androidx.test.core.app.ActivityScenario;
 
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
 import com.example.nakama.DataBase.Entities.UserScores.UserScores;
+import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
 import com.example.nakama.SharedPreferences.AppPreferences;
 import com.example.nakama.Utils.Action;
@@ -36,7 +36,7 @@ public class TimerActivityScreen extends BaseScreen{
     public static Matcher<View> samplesFoundTextView =  withId(R.id.timerSamplesFound);
     public static Matcher<View> defecationTextView =  withId(R.id.timerDefecationCounter);
     public static Matcher<View> droppedTreatTextView =  withId(R.id.timerDroppedTreatsCounter);
-    private Matcher<View> progressBar =  withId(R.id.timeProgressBar);
+    private final Matcher<View> progressBar =  withId(R.id.timeProgressBar);
 
     //----Action Buttons---
     public static Matcher<View> falseAlarmButton =  withId(R.id.timerFalseAlarmButton);
@@ -65,27 +65,38 @@ public class TimerActivityScreen extends BaseScreen{
             appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
             appPreferences.setPollingFrequency(pollingFrequency);
             appPreferences.setRingTime(timer);
+            Users defaultUser = new Users("Tomasz", "Szymaniak", "Nala");
+            int userId = db.getUserId(defaultUser);
+            db.clearUserScore(userId, appPreferences.getDifficulty(), appPreferences.getActiveRing());
         });
         scenario.recreate();
     }
 
-    public void clickPlayButton(){
+    public void clickPlayButton() {
         Action.clickOnView(playButton);
     }
 
-    public void clickPauseButton(){
+    public void clickPauseButton() {
         Action.clickOnView(pauseButton);
     }
 
-    public void clickFalseAlarm(){
+    public void clickResetButtonButton() {
+        Action.clickOnView(resetButton);
+    }
+
+    public void clickFalseAlarm() {
         Action.clickOnView(falseAlarmButton);
     }
 
-    public void clickPositiveAlarm(){
+    public void clickPositiveAlarm() {
         Action.clickOnView(positiveAlarmButton);
     }
 
-    public void confirmFalseAlarm(){
+    public void clickTreatDroppedButton() {
+        Action.clickOnView(droppedTreatButton);
+    }
+
+    public void confirmFalseAlarm() {
         validateFalseAlarmConfirmationDialog();
         Action.clickByText(R.string.dialog_positive_yes_button);
     }
@@ -94,14 +105,35 @@ public class TimerActivityScreen extends BaseScreen{
         validatePositiveAlarmConfirmationDialog();
         Action.clickByText(R.string.dialog_positive_yes_button);
     }
+    public void confirmTreatDropped(){
+        validateTreatDroppedConfirmationDialog();
+        Action.clickByText(R.string.dialog_positive_yes_button);
+    }
 
+    public void confirmReset(){
+        validateConfirmResetDialog();
+        Action.clickByText(R.string.dialog_positive_yes_button);
+    }
+
+    public void cancelReset(){
+        validateConfirmResetDialog();
+        Action.clickByText(R.string.dialog_negative_button);
+    }
     public void dismissFalseAlarmLimitReachedDialog(){
         validateFalseAlarmLimitReachedDialog();
         Action.clickByText(R.string.dialog_positive_ok_button);
     }
-
     public void dismissAllSamplesFoundDialog(){
         validateAllSamplesFoundDialog();
+        Action.clickByText(R.string.dialog_positive_ok_button);
+    }
+    public void dismissTreatDroppedLimitReachedDialog(){
+        validateTreatDroppedLimitReachedDialog();
+        Action.clickByText(R.string.dialog_positive_ok_button);
+    }
+
+    public void dismissTimeoutDialog(){
+        validateTimeoutDialog();
         Action.clickByText(R.string.dialog_positive_ok_button);
     }
 
@@ -154,12 +186,34 @@ public class TimerActivityScreen extends BaseScreen{
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.false_alarms_reached_dialog_message));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
     }
-
     public void validateAllSamplesFoundDialog(){
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.all_samples_found_dialog_title));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.all_samples_found_dialog_message));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
     }
+    public void validateTreatDroppedConfirmationDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_treat_dropped_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+    }
+    public void validateTreatDroppedLimitReachedDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.tread_dropped_limit_reached_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.tread_dropped_limit_reached_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
+    }
+    public void validateConfirmResetDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_reset_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+    }
+    public void validateTimeoutDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.timeout_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_ok_button));
+    }
+
 
     public String getTimerText(){
         return Action.getText(timerTextView);
@@ -185,8 +239,14 @@ public class TimerActivityScreen extends BaseScreen{
         onView(resetButton).check(matches(isDisplayed()));
         onView(doneButton).check(matches(isDisplayed()));
     }
+
+    public void validateFinishedButtons(){
+        onView(playButton).check(matches(not(isDisplayed())));
+        onView(pauseButton).check(matches(not(isDisplayed())));
+        onView(resetButton).check(matches(isDisplayed()));
+        onView(doneButton).check(matches(isDisplayed()));
+    }
     public void validateTimer(int expectedTime){
-        Assert.assertEquals(Integer.valueOf(expectedTime), Action.getMax(progressBar));
         Assert.assertEquals(Integer.valueOf(expectedTime), Action.getProgress(progressBar));
         Assert.assertEquals(Converter.millisToString(expectedTime), Action.getText(timerTextView));
     }

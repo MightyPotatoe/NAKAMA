@@ -149,6 +149,11 @@ public class TimerActivity extends AppCompatActivity {
         showConfirmPositiveAlarmDialog();
     }
 
+    public void onTreatDroppedButton(View view) {
+        Log.v("ACTIVITY DEBUG:", "Treat dropped button pressed");
+        showConfirmTreatDropDialog();
+    }
+
     public void showTimeUpDialog() {
         new MaterialAlertDialogBuilder(TimerActivity.this)
                 .setTitle(R.string.timeout_dialog_title)
@@ -267,6 +272,43 @@ public class TimerActivity extends AppCompatActivity {
                 .setTitle(R.string.all_samples_found_dialog_title)
                 .setMessage(R.string.all_samples_found_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
+                })
+                .show();
+    }
+
+    public void showConfirmTreatDropDialog() {
+        new MaterialAlertDialogBuilder(TimerActivity.this)
+                .setTitle(R.string.confirm_dialog_title)
+                .setMessage(R.string.confirm_treat_dropped_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
+                    int currentTreatDropped = db.userScoresDao().getUserScoresTreatDropped(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    currentTreatDropped += 1;
+                    //Update false alarms
+                    db.userScoresDao().updateUserScoresTreatDropped(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), currentTreatDropped);
+                    //Update score
+                    int currentScore = db.userScoresDao().getUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    if(currentTreatDropped == 2){
+                        this.stopService(timerServiceIntent);
+                        viewManager.setViewToFinishedState();
+                        showTreatDroppedLimitDialog();
+                        return;
+                    }
+                    db.userScoresDao().updateUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), currentScore - 30);
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                })
+                .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
+                .show();
+    }
+
+    public void showTreatDroppedLimitDialog() {
+        new MaterialAlertDialogBuilder(TimerActivity.this)
+                .setTitle(R.string.tread_dropped_limit_reached_dialog_title)
+                .setMessage(R.string.tread_dropped_limit_reached_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
+                    viewManager.setTimerCurrentTime(0);
+                    db.userScoresDao().updateUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                 })
                 .show();
     }
