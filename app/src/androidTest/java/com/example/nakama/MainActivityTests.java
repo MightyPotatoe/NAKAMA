@@ -10,7 +10,7 @@ import androidx.test.core.app.ActivityScenario;
 
 import com.example.nakama.Activities.MainActivity.MainActivity;
 import com.example.nakama.DataBase.AppDatabase;
-import com.example.nakama.DataBase.Entities.UserScores.UserScores;
+import com.example.nakama.DataBase.Entities.UserScores.UserScore;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.Screens.MainActivityScreen;
 import com.example.nakama.Screens.TimerActivityScreen;
@@ -21,8 +21,6 @@ import com.example.nakama.Utils.Validate;
 
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
 
 public class MainActivityTests {
 
@@ -83,21 +81,21 @@ public class MainActivityTests {
         connectDb(scenario);
         Users user = new Users("Tomasz", "Szymaniak", "Nala");
         int userId = db.getUserId(user);
-        db.addUserScore(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1);
-        db.userScoresDao().updateUserScores(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1, "01:00:00", 1, 1, true, 75, "Ok", 0);
-        List<UserScores> userScores = db.userScoresDao().getUserScores(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1);
-        Assert.assertEquals(userScores.get(0).attemptTime, "01:00:00");
+        db.addUserScoreIfNotExists(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
+        db.userScoresDao().updateScores(new UserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1, 75, "01:00:00", 1, true, 1,  0, "Ok", null));
+        UserScore userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
+        Assert.assertEquals(userScore.attemptTime, "01:00:00");
 
         onView(MainActivityScreen.startBasicModeButton).perform(click());
         validateConfirmOverrideDialog();
         Action.clickByText(R.string.dialog_negative_button);
-        userScores = db.userScoresDao().getUserScores(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1);
-        Assert.assertEquals("01:00:00", userScores.get(0).attemptTime);
-        Assert.assertEquals(1, userScores.get(0).falseAlarms);
-        Assert.assertEquals(1, userScores.get(0).treatDrop);
-        Assert.assertTrue(userScores.get(0).defecation);
-        Assert.assertEquals(75, userScores.get(0).score);
-        Assert.assertEquals("Ok", userScores.get(0).overview);
+        userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
+        Assert.assertEquals("01:00:00", userScore.attemptTime);
+        Assert.assertEquals(1, userScore.falseAlarms);
+        Assert.assertEquals(1, userScore.treatDrop);
+        Assert.assertTrue(userScore.defecation);
+        Assert.assertEquals(75, userScore.score);
+        Assert.assertEquals("Ok", userScore.overview);
 
         Assert.assertTrue(Validate.isElementDisplayedById(R.id.card_view));
 
@@ -106,13 +104,13 @@ public class MainActivityTests {
         Action.clickByText(R.string.dialog_positive_yes_button);
         Assert.assertEquals("02:00:00", Action.getText(TimerActivityScreen.timerTextView));
 
-        userScores = db.userScoresDao().getUserScores(userId, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1);
-        Assert.assertNull(userScores.get(0).attemptTime);
-        Assert.assertEquals(0, userScores.get(0).falseAlarms);
-        Assert.assertEquals(0, userScores.get(0).treatDrop);
-        Assert.assertFalse(userScores.get(0).defecation);
-        Assert.assertEquals(200, userScores.get(0).score);
-        Assert.assertNull(userScores.get(0).overview);
+        userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
+        Assert.assertNull(userScore.attemptTime);
+        Assert.assertEquals(0, userScore.falseAlarms);
+        Assert.assertEquals(0, userScore.treatDrop);
+        Assert.assertFalse(userScore.defecation);
+        Assert.assertEquals(200, userScore.score);
+        Assert.assertNull(userScore.overview);
         Assert.assertEquals("Poziom Podstawowy",Action.getText(TimerActivityScreen.difficultyTextView));
         Assert.assertEquals("Ring 1",Action.getText(TimerActivityScreen.ringTextView));
         Assert.assertEquals("Tomasz Szymaniak i Nala",Action.getText(TimerActivityScreen.usernameTextView));
@@ -139,21 +137,21 @@ public class MainActivityTests {
         connectDb(scenario);
         Users user = new Users("Tomasz", "Szymaniak", "Nala");
         int userId = db.getUserId(user);
-        db.addUserScore(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1);
-        db.userScoresDao().updateUserScores(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1, "01:00:00", 1, 1, true, 75, "Ok", 0);
-        List<UserScores> userScores = db.userScoresDao().getUserScores(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1);
-        Assert.assertEquals(userScores.get(0).attemptTime, "01:00:00");
+        db.addUserScoreIfNotExists(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1);
+        db.userScoresDao().updateScores(new UserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1, 75, "01:00:00", 1, true, 1,  0, "Ok", null));
+        UserScore userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1);
+        Assert.assertEquals(userScore.attemptTime, "01:00:00");
 
         onView(MainActivityScreen.startAdvancedModeButton).perform(click());
         validateConfirmOverrideDialog();
         Action.clickByText(R.string.dialog_negative_button);
-        userScores = db.userScoresDao().getUserScores(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1);
-        Assert.assertEquals("01:00:00", userScores.get(0).attemptTime);
-        Assert.assertEquals(1, userScores.get(0).falseAlarms);
-        Assert.assertEquals(1, userScores.get(0).treatDrop);
-        Assert.assertTrue(userScores.get(0).defecation);
-        Assert.assertEquals(75, userScores.get(0).score);
-        Assert.assertEquals("Ok", userScores.get(0).overview);
+        userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1);
+        Assert.assertEquals("01:00:00", userScore.attemptTime);
+        Assert.assertEquals(1, userScore.falseAlarms);
+        Assert.assertEquals(1, userScore.treatDrop);
+        Assert.assertTrue(userScore.defecation);
+        Assert.assertEquals(75, userScore.score);
+        Assert.assertEquals("Ok", userScore.overview);
 
         Assert.assertTrue(Validate.isElementDisplayedById(R.id.card_view));
 
@@ -162,13 +160,13 @@ public class MainActivityTests {
         Action.clickByText(R.string.dialog_positive_yes_button);
         Assert.assertEquals("04:00:00", Action.getText(TimerActivityScreen.timerTextView));
 
-        userScores = db.userScoresDao().getUserScores(userId, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1);
-        Assert.assertNull(userScores.get(0).attemptTime);
-        Assert.assertEquals(0, userScores.get(0).falseAlarms);
-        Assert.assertEquals(0, userScores.get(0).treatDrop);
-        Assert.assertFalse(userScores.get(0).defecation);
-        Assert.assertEquals(200, userScores.get(0).score);
-        Assert.assertNull(userScores.get(0).overview);
+        userScore = db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1);
+        Assert.assertNull(userScore.attemptTime);
+        Assert.assertEquals(0, userScore.falseAlarms);
+        Assert.assertEquals(0, userScore.treatDrop);
+        Assert.assertFalse(userScore.defecation);
+        Assert.assertEquals(200, userScore.score);
+        Assert.assertNull(userScore.overview);
         Assert.assertEquals("Poziom Zaawansowany",Action.getText(TimerActivityScreen.difficultyTextView));
         Assert.assertEquals("Ring 1",Action.getText(TimerActivityScreen.ringTextView));
         Assert.assertEquals("Tomasz Szymaniak i Nala",Action.getText(TimerActivityScreen.usernameTextView));

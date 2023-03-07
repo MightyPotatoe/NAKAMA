@@ -14,7 +14,7 @@ import android.view.View;
 import androidx.test.core.app.ActivityScenario;
 
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
-import com.example.nakama.DataBase.Entities.UserScores.UserScores;
+import com.example.nakama.DataBase.Entities.UserScores.UserScore;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
 import com.example.nakama.SharedPreferences.AppPreferences;
@@ -137,8 +137,8 @@ public class TimerActivityScreen extends BaseScreen{
         Action.clickByText(R.string.dialog_positive_ok_button);
     }
 
-    public void validateScores(int score, int falseAlarms, int defecations, int droppedTreats, int samplesFound){
-        UserScores userScore = db.getUserScore(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing());
+    public void validateScores(int score, int falseAlarms, int defecation, int droppedTreats, int samplesFound){
+        UserScore userScore = db.userScoresDao().getUserScore(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing());
 
         Assert.assertEquals(score, userScore.score);
         Assert.assertEquals(String.format("%d pkt", score), Action.getText(scoreTextView));
@@ -146,11 +146,11 @@ public class TimerActivityScreen extends BaseScreen{
         Assert.assertEquals(String.valueOf(falseAlarms), Action.getText(falseAlarmsTextView));
         Assert.assertEquals(falseAlarms, userScore.falseAlarms);
 
-        if(defecations == 1){
+        if(defecation == 1){
             Assert.assertTrue(userScore.defecation);
             Assert.assertEquals("1", Action.getText(defecationTextView));
         }
-        else if(defecations == 0){
+        else if(defecation == 0){
             Assert.assertFalse(userScore.defecation);
             Assert.assertEquals("0", Action.getText(defecationTextView));
         }

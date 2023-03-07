@@ -34,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
         viewManager.getBasicLevelButton().setOnClickListener(view ->{
             appPreferences.setFalseAlarmsLimit(1);
             appPreferences.setSamplesInRun(1);
-            openTimerActivity(120000, Dictionary.Difficulty.BASIC, Dictionary.Rings.RING_1, user);
+            openTimerActivity(120000, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1, user);
         });
 
         viewManager.getAdvancedLevelButton().setOnClickListener(view ->{
             appPreferences.setFalseAlarmsLimit(2);
             appPreferences.setSamplesInRun(2);
-            openTimerActivity(240000, Dictionary.Difficulty.ADVANCED, Dictionary.Rings.RING_1, user);
+            openTimerActivity(240000, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1, user);
         });
     }
 
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         appPreferences.setDifficulty(difficulty);
         appPreferences.setActiveRing(ring);
         appPreferences.setUserId(db.getUserId(user));
-        if(!db.addUserScore(db.getUserId(user), difficulty, ring)){
+        if(!db.addUserScoreIfNotExists(db.getUserId(user), difficulty, ring)){
             showConfirmClearingAttemptDialog(db.getUserId(user), difficulty, ring);
         }
         else {

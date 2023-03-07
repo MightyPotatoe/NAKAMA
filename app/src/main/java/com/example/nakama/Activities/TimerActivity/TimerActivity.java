@@ -39,10 +39,10 @@ public class TimerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         appPreferences = new AppPreferences(getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
         switch (appPreferences.getDifficulty()){
-            case Dictionary.Difficulty.BASIC:
+            case Dictionary.Difficulty.Basic.NAME:
                 setTheme(R.style.Theme_NAKAMA_BasicLevelTheme);
                 break;
-            case Dictionary.Difficulty.ADVANCED:
+            case Dictionary.Difficulty.Advanced.NAME:
                 setTheme(R.style.Theme_NAKAMA_AdvancedLevelTheme);
                 break;
         }
@@ -154,6 +154,11 @@ public class TimerActivity extends AppCompatActivity {
         showConfirmTreatDropDialog();
     }
 
+    public void onDefecationButtonClick(View view) {
+        Log.v("ACTIVITY DEBUG:", "Defecation button pressed");
+        showConfirmDefecationDialog();
+    }
+
     public void showTimeUpDialog() {
         new MaterialAlertDialogBuilder(TimerActivity.this)
                 .setTitle(R.string.timeout_dialog_title)
@@ -226,7 +231,7 @@ public class TimerActivity extends AppCompatActivity {
                         showFalseAlarmLimitDialog();
                         return;
                     }
-                    db.userScoresDao().updateUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), currentScore - 50);
+                    db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), currentScore - 50);
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                 })
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
@@ -261,7 +266,7 @@ public class TimerActivity extends AppCompatActivity {
                 .setMessage(R.string.false_alarms_reached_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
                     viewManager.setTimerCurrentTime(0);
-                    db.userScoresDao().updateUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                 })
                 .show();
@@ -294,7 +299,7 @@ public class TimerActivity extends AppCompatActivity {
                         showTreatDroppedLimitDialog();
                         return;
                     }
-                    db.userScoresDao().updateUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), currentScore - 30);
+                    db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), currentScore - 30);
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                 })
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
@@ -307,9 +312,27 @@ public class TimerActivity extends AppCompatActivity {
                 .setMessage(R.string.tread_dropped_limit_reached_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
                     viewManager.setTimerCurrentTime(0);
-                    db.userScoresDao().updateUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                 })
+                .show();
+    }
+
+    public void showConfirmDefecationDialog() {
+        new MaterialAlertDialogBuilder(TimerActivity.this)
+                .setTitle(R.string.confirm_dialog_title)
+                .setMessage(R.string.confirm_defecation_dialog_message)
+                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
+                    //Check if there is no other defecation on any other rings (on this difficulty) - if so its disqualification
+                    if(db.checkAllRingsForAnyDefecation(user.uid,  appPreferences.getDifficulty())){
+                       db.disqualifyContestant(user.uid, appPreferences.getDifficulty(), getResources().getString(R.string.defecation_disqualification_reason));
+                    }
+                    db.userScoresDao().updateUserScoresDefecation(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), true);
+                    db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    viewManager.setTimerCurrentTime(0);
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                })
+                .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
     }
 
