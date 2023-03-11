@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
 import com.example.nakama.DataBase.AppDatabase;
+import com.example.nakama.DataBase.Entities.UserScores.UserScore;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
 import com.example.nakama.SharedPreferences.AppPreferences;
@@ -51,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(R.string.confirm_dialog_title)
                 .setMessage(message)
                 .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
-                    db.clearUserScore(userId, difficulty, ring);
+                    UserScore userScore = new UserScore(userId, difficulty, ring);
+                    db.userScoresDao().updateScores(userScore);
                     Intent intent = new Intent(getApplicationContext(), TimerActivity.class);
                     startActivity(intent);
                 })

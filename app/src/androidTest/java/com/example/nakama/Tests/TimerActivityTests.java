@@ -1,4 +1,4 @@
-package com.example.nakama;
+package com.example.nakama.Tests;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -359,4 +359,7 @@ public class TimerActivityTests {
         Assert.assertEquals(Converter.millisToString(240000), userScore4.attemptTime);
         Assert.assertEquals("Bo jest dupkiem.", userScore1.disqualification_reason);
     }
+
+    // TODO: 08.03.2023 Done button should not need to be confirmed when user is disqualified
+
 }

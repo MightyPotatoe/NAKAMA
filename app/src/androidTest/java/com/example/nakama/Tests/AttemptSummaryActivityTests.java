@@ -1,6 +1,4 @@
-package com.example.nakama;
-
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
+package com.example.nakama.Tests;
 
 import android.content.Context;
 
@@ -8,9 +6,12 @@ import androidx.test.core.app.ActivityScenario;
 
 import com.example.nakama.Activities.AttemptSummaryActivity.AttemptSummaryActivity;
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
+import com.example.nakama.R;
+import com.example.nakama.Screens.OverallImpressionScreen;
+import com.example.nakama.Screens.RingResultActivityScreen;
+import com.example.nakama.Screens.TimerActivityScreen;
 import com.example.nakama.SharedPreferences.AppPreferences;
 import com.example.nakama.Utils.Action;
-import com.example.nakama.Utils.Converter;
 import com.example.nakama.Utils.Validate;
 
 import org.junit.Assert;
@@ -41,19 +42,15 @@ public class AttemptSummaryActivityTests {
      */
     @Test
     public void max_score_should_be_obtained_when_timer_is_not_exceed() throws InterruptedException {
-        ActivityScenario<TimerActivity> scenario = setTimerActivityScenario();
-        Action.clickById(R.id.playButton);
-        Thread.sleep(2000);
-        Action.clickById(R.id.pauseButton);
-        int timeLeftValue = Converter.stringToMillis(Action.getText(withId(R.id.timeTextView)));
+        TimerActivityScreen timerActivityScreen = new TimerActivityScreen(2000, 500);
+        timerActivityScreen.clickPlayButton();
+        Thread.sleep(500);
+        timerActivityScreen.clickPauseButton();
+        timerActivityScreen.clickDoneButton();
+        OverallImpressionScreen overallImpressionScreen = timerActivityScreen.confirmFinish();
 
-        Action.clickById(R.id.doneButton);
-        Action.clickByText(R.string.dialog_positive_yes_button);
-
-        int attemptTime = Converter.stringToMillis(Action.getText(withId(R.id.summaryTimeValue)));
-        Assert.assertEquals(10000, timeLeftValue + attemptTime);
-        Assert.assertEquals("200 pkt.", Action.getText(withId(R.id.summaryPointsValue)));
-        scenario.close();
+        RingResultActivityScreen ringResultActivityScreen = overallImpressionScreen.clickSkipButton();
+        Assert.assertEquals("200 pkt.", ringResultActivityScreen.getSummaryPoints());
     }
 
     /**
@@ -69,17 +66,18 @@ public class AttemptSummaryActivityTests {
      */
     @Test
     public void zero_score_should_be_obtained_when_timer_is_exceed() throws InterruptedException {
-        ActivityScenario<TimerActivity> scenario = setTimerActivityScenario();
-        Action.clickById(R.id.playButton);
-        Thread.sleep(10000);
+        TimerActivityScreen timerActivityScreen = new TimerActivityScreen(2000, 500);
+        timerActivityScreen.clickPlayButton();
+        Thread.sleep(2500);
 
-        Action.clickByText(R.string.dialog_positive_ok_button);
-        Action.clickById(R.id.doneButton);
-        Action.clickByText(R.string.dialog_positive_yes_button);
+        timerActivityScreen.validateTimeoutDialog();
+        timerActivityScreen.dismissTimeoutDialog();
+        timerActivityScreen.clickDoneButton();
+        OverallImpressionScreen overallImpressionScreen = timerActivityScreen.confirmFinish();
 
-        Assert.assertEquals("00:10:00", Action.getText(withId(R.id.summaryTimeValue)));
-        Assert.assertEquals("0 pkt.", Action.getText(withId(R.id.summaryPointsValue)));
-        scenario.close();
+        RingResultActivityScreen ringResultActivityScreen = overallImpressionScreen.clickSkipButton();
+        Assert.assertEquals("00:02:00", ringResultActivityScreen.getSummaryTime());
+        Assert.assertEquals("0 pkt.", ringResultActivityScreen.getSummaryPoints());
     }
 
     /**

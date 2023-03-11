@@ -28,9 +28,9 @@ import org.junit.Assert;
 public class TimerActivityScreen extends BaseScreen{
 
     public static Matcher<View> timerTextView =  withId(R.id.timeTextView);
-    public static Matcher<View> usernameTextView =  withId(R.id.timerUserDetailsTextView);
-    public static Matcher<View> difficultyTextView =  withId(R.id.timerDifficultyTextView);
-    public static Matcher<View> ringTextView =  withId(R.id.timerRingDetailsTextView);
+    public static Matcher<View> usernameTextView =  withId(R.id.topBarUserDetailsTextView);
+    public static Matcher<View> difficultyTextView =  withId(R.id.topBarDifficultyTextView);
+    public static Matcher<View> ringTextView =  withId(R.id.topBarRingDetailsTextView);
     public static Matcher<View> scoreTextView = withId(R.id.timerScore);
     public static Matcher<View> falseAlarmsTextView =  withId(R.id.timerFalseAlarmCounter);
     public static Matcher<View> samplesFoundTextView =  withId(R.id.timerSamplesFound);
@@ -88,15 +88,15 @@ public class TimerActivityScreen extends BaseScreen{
         });
         scenario.recreate();
     }
-
     public void clickPlayButton() {
         Action.clickOnView(playButton);
     }
-
     public void clickPauseButton() {
         Action.clickOnView(pauseButton);
     }
-
+    public void clickDoneButton() {
+        Action.clickOnView(doneButton);
+    }
     public void clickResetButtonButton() {
         Action.clickOnView(resetButton);
     }
@@ -121,6 +121,11 @@ public class TimerActivityScreen extends BaseScreen{
     public void confirmDisqualification() {
         validateDisqualificationConfirmationDialog();
         Action.clickByText(R.string.dialog_positive_yes_button);
+    }
+    public OverallImpressionScreen confirmFinish() {
+        validateConfirmFinishDialog();
+        Action.clickByText(R.string.dialog_positive_yes_button);
+        return new OverallImpressionScreen(scenario);
     }
 
     public RingResultActivityScreen provideReasonAndDismissDisqualificationDialog(String reason){
@@ -266,6 +271,13 @@ public class TimerActivityScreen extends BaseScreen{
     public void validateConfirmResetDialog(){
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_reset_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
+    }
+
+    public void validateConfirmFinishDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_attempt_dialog_message));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
         Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
     }

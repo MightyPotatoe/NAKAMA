@@ -8,63 +8,11 @@
     android:theme="?attr/theme"
     tools:context=".Activities.TimerActivity.TimerActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <include
         android:id="@+id/timerTopBarLayout"
+        layout="@layout/top_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/advanced_difficulty_color"
-        android:paddingBottom="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/timerDifficultyImage"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
-            android:background="@color/advanced_difficulty_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ImageView.Corner"
-            app:srcCompat="@drawable/advanced_level_icon" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/timerDifficultyTextView"
-            style="@style/TextAppearance.Material3.TitleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/app_name"
-            android:textColor="@color/md_theme_light_onPrimary"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/timerRingDetailsTextView"
-            style="@style/TextAppearance.Material3.TitleMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/md_theme_light_onPrimary"
-            app:layout_constraintStart_toStartOf="@+id/timerDifficultyTextView"
-            app:layout_constraintTop_toBottomOf="@+id/timerDifficultyTextView" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/timerUserDetailsTextView"
-            style="@style/TextAppearance.Material3.BodyMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/md_theme_light_onPrimary"
-            app:layout_constraintStart_toStartOf="@+id/timerRingDetailsTextView"
-            app:layout_constraintTop_toBottomOf="@+id/timerRingDetailsTextView" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+        android:layout_height="wrap_content" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView"

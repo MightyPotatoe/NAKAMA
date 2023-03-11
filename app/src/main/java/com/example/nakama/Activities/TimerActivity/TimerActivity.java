@@ -15,6 +15,7 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.Activities.AttemptSummaryActivity.AttemptSummaryActivity;
+import com.example.nakama.Activities.OverallImpressionActivity.OverallImpressionActivity;
 import com.example.nakama.DataBase.AppDatabase;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
@@ -140,7 +141,9 @@ public class TimerActivity extends AppCompatActivity {
 
     public void onDoneButtonClick(View view) {
         Log.v("ACTIVITY DEBUG:", "Done button pressed");
-        showConfirmAttemptDialog();
+        if(db.userScoresDao().getUserScoresDisqualificationReason(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing()) == null){
+            showConfirmAttemptDialog();
+        }
     }
 
     public void onFalseAlarmButtonClick(View view) {
@@ -172,6 +175,8 @@ public class TimerActivity extends AppCompatActivity {
                 .setTitle(R.string.timeout_dialog_title)
                 .setMessage(R.string.timeout_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
+                    db.userScoresDao().updateScorePoints(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                 })
                 .show();
     }
@@ -202,9 +207,8 @@ public class TimerActivity extends AppCompatActivity {
                     //getting duration of this run
                     int timeLeft = Converter.stringToMillis((String) viewManager.getTimerTextView().getText());
                     int runTimeInMillis = appPreferences.getRingTime() - timeLeft;
-                    Intent intent = new Intent(this, AttemptSummaryActivity.class);
-                    intent.putExtra(INTENT_EXTRA_TIME, runTimeInMillis);
-                    intent.putExtra(INTENT_EXTRA_SCORE, calculateUserScore());
+                    db.userScoresDao().updateUserScoresAttemptTime(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing(), Converter.millisToString(runTimeInMillis));
+                    Intent intent = new Intent(this, OverallImpressionActivity.class);
                     startActivity(intent);
                 })
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
@@ -383,7 +387,7 @@ public class TimerActivity extends AppCompatActivity {
     public void showDisqualificationReasonInputDialog() {
         LayoutInflater inflater = TimerActivity.this.getLayoutInflater();
         View mView = inflater.inflate(R.layout.edit_text_view, null, false);
-        EditText editText = (EditText) mView.findViewById(R.id.textInput);
+        EditText editText = mView.findViewById(R.id.textInput);
         new MaterialAlertDialogBuilder(TimerActivity.this)
                 .setView(mView)
                 .setTitle(R.string.disqualification_dialog_title)
