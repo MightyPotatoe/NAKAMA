@@ -1,5 +1,10 @@
 package com.example.nakama.Tests;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static org.hamcrest.core.IsNot.not;
+
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -7,7 +12,7 @@ import com.example.nakama.Activities.MainActivity.MainActivity;
 import com.example.nakama.DataBase.Entities.UserScores.UserScore;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.Screens.MainActivityScreen;
-import com.example.nakama.Screens.RingResultActivityScreen;
+import com.example.nakama.Screens.RingSummaryActivityScreen;
 import com.example.nakama.Screens.TimerActivityScreen;
 import com.example.nakama.Utils.Converter;
 import com.example.nakama.Utils.Dictionary;
@@ -152,6 +157,7 @@ public class TimerActivityTests {
     /**
      * False alarms counter should be incremented. When limit is reached it timer and score should be set to zero.
      * 50pts should be subtract on each false alarm
+     * When attempt is failed due to false alarm limits it should go directly to summary and all scores should be set to "failed"
      */
     @Test
     public void false_alarms_button_should_increase_counter_and_stop_when_limit_reached() throws InterruptedException {
@@ -175,9 +181,19 @@ public class TimerActivityTests {
         Thread.sleep(1000);
         timerActivityScreen.clickFalseAlarm();
         timerActivityScreen.confirmFalseAlarm();
-        timerActivityScreen.dismissFalseAlarmLimitReachedDialog();
-        timerActivityScreen.validateScores(0, 3, 0, 0, 0);
-        timerActivityScreen.validateTimer("00:00:00", 0);
+        RingSummaryActivityScreen ringSummaryActivityScreen = timerActivityScreen.dismissFalseAlarmLimitReachedDialog();
+
+        Assert.assertEquals("0 pkt.", ringSummaryActivityScreen.getSummaryPoints());
+        ringSummaryActivityScreen.validateTimerResult(240000, "00:00:00");
+        Assert.assertEquals("0/2", ringSummaryActivityScreen.getSamplesFound());
+        Assert.assertEquals("3", ringSummaryActivityScreen.getFalseAlarmsCounter());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getFalseAlarmsScoreImpact());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getDefecationScoreImpact());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getTreatDroppedScoreImpact());
+
+        onView(ringSummaryActivityScreen.getImpressionsLabelElement()).check(matches(not(isDisplayed())));
+        onView(ringSummaryActivityScreen.getDisqualificationReasonLabelElement()).check(matches(not(isDisplayed())));
+        onView(ringSummaryActivityScreen.getDisqualificationReasonElement()).check(matches(not(isDisplayed())));
     }
 
     /**
@@ -229,9 +245,22 @@ public class TimerActivityTests {
         Thread.sleep(1000);
         timerActivityScreen.clickTreatDroppedButton();
         timerActivityScreen.confirmTreatDropped();
-        timerActivityScreen.dismissTreatDroppedLimitReachedDialog();
-        timerActivityScreen.validateScores(0, 0, 0, 2, 0);
-        timerActivityScreen.validateTimer("00:00:00", 0);
+        RingSummaryActivityScreen ringSummaryActivityScreen = timerActivityScreen.dismissTreatDroppedLimitReachedDialog();
+
+        Assert.assertEquals("0 pkt.", ringSummaryActivityScreen.getSummaryPoints());
+        ringSummaryActivityScreen.validateTimerResult(120000, "00:00:00");
+        Assert.assertEquals("0/1", ringSummaryActivityScreen.getSamplesFound());
+        Assert.assertEquals("0", ringSummaryActivityScreen.getFalseAlarmsCounter());
+        Assert.assertEquals("0", ringSummaryActivityScreen.getDefecationCounter());
+        Assert.assertEquals("2", ringSummaryActivityScreen.getTreatDroppedCounter());
+
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getFalseAlarmsScoreImpact());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getDefecationScoreImpact());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getTreatDroppedScoreImpact());
+
+        onView(ringSummaryActivityScreen.getImpressionsLabelElement()).check(matches(not(isDisplayed())));
+        onView(ringSummaryActivityScreen.getDisqualificationReasonLabelElement()).check(matches(not(isDisplayed())));
+        onView(ringSummaryActivityScreen.getDisqualificationReasonElement()).check(matches(not(isDisplayed())));
     }
 
     /**
@@ -254,9 +283,22 @@ public class TimerActivityTests {
         Thread.sleep(1000);
         timerActivityScreen.clickTreatDroppedButton();
         timerActivityScreen.confirmTreatDropped();
-        timerActivityScreen.dismissTreatDroppedLimitReachedDialog();
-        timerActivityScreen.validateScores(0, 0, 0, 2, 0);
-        timerActivityScreen.validateTimer("00:00:00", 0);
+        RingSummaryActivityScreen ringSummaryActivityScreen = timerActivityScreen.dismissTreatDroppedLimitReachedDialog();
+
+        Assert.assertEquals("0 pkt.", ringSummaryActivityScreen.getSummaryPoints());
+        ringSummaryActivityScreen.validateTimerResult(240000, "00:00:00");
+        Assert.assertEquals("0/2", ringSummaryActivityScreen.getSamplesFound());
+        Assert.assertEquals("0", ringSummaryActivityScreen.getFalseAlarmsCounter());
+        Assert.assertEquals("0", ringSummaryActivityScreen.getDefecationCounter());
+        Assert.assertEquals("2", ringSummaryActivityScreen.getTreatDroppedCounter());
+
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getFalseAlarmsScoreImpact());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getDefecationScoreImpact());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getTreatDroppedScoreImpact());
+
+        onView(ringSummaryActivityScreen.getImpressionsLabelElement()).check(matches(not(isDisplayed())));
+        onView(ringSummaryActivityScreen.getDisqualificationReasonLabelElement()).check(matches(not(isDisplayed())));
+        onView(ringSummaryActivityScreen.getDisqualificationReasonElement()).check(matches(not(isDisplayed())));
     }
 
     /**
@@ -278,10 +320,20 @@ public class TimerActivityTests {
         timerActivityScreen.clickPlayButton();
         Thread.sleep(1000);
         timerActivityScreen.clickDefecationButton();
-        timerActivityScreen.confirmDefecation();
-        timerActivityScreen.validateScores(0, 0, 1, 0, 0);
-        timerActivityScreen.validateTimer("00:00:00", 0);
-        timerActivityScreen.validateFinishedButtons();
+        RingSummaryActivityScreen ringSummaryActivityScreen = timerActivityScreen.confirmDefecation();
+
+        Assert.assertEquals("0 pkt.", ringSummaryActivityScreen.getSummaryPoints());
+        ringSummaryActivityScreen.validateTimerResult(240000, "00:00:00");
+        Assert.assertEquals("0/2", ringSummaryActivityScreen.getSamplesFound());
+        Assert.assertEquals("0", ringSummaryActivityScreen.getFalseAlarmsCounter());
+        Assert.assertEquals("1", ringSummaryActivityScreen.getDefecationCounter());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getFalseAlarmsScoreImpact());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getDefecationScoreImpact());
+        Assert.assertEquals("Niezaliczone", ringSummaryActivityScreen.getTreatDroppedScoreImpact());
+
+        onView(ringSummaryActivityScreen.getImpressionsLabelElement()).check(matches(not(isDisplayed())));
+        onView(ringSummaryActivityScreen.getDisqualificationReasonLabelElement()).check(matches(not(isDisplayed())));
+        onView(ringSummaryActivityScreen.getDisqualificationReasonElement()).check(matches(not(isDisplayed())));
     }
 
     /**
@@ -303,10 +355,10 @@ public class TimerActivityTests {
         Thread.sleep(1000);
         timerActivityScreen.clickDefecationButton();
         timerActivityScreen.confirmDefecation();
-        RingResultActivityScreen ringResultActivityScreen = timerActivityScreen.dismissDisqualificationDialog();
+        RingSummaryActivityScreen ringSummaryActivityScreen = timerActivityScreen.dismissDisqualificationDialog();
 
         // TODO: 07.03.2023 This shoud finally lead to summary of all 4 rings! 
-        Assert.assertEquals("0 pkt.", ringResultActivityScreen.getSummaryPoints());
+        Assert.assertEquals("0 pkt.", ringSummaryActivityScreen.getSummaryPoints());
         UserScore userScore1 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1);
         UserScore userScore2 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_2);
         UserScore userScore3 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_3);
@@ -320,6 +372,9 @@ public class TimerActivityTests {
         Assert.assertEquals(Converter.millisToString(240000), userScore3.attemptTime);
         Assert.assertEquals(Converter.millisToString(240000), userScore4.attemptTime);
         Assert.assertEquals("Załatwianie potrzeb fizjologicznych na więcej niż jednym ringu.", userScore1.disqualification_reason);
+        mainActivityScreen.db.userScoresDao().delete(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_2);
+        mainActivityScreen.db.userScoresDao().delete(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_3);
+        mainActivityScreen.db.userScoresDao().delete(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_4);
     }
 
     /**
@@ -341,10 +396,10 @@ public class TimerActivityTests {
         Thread.sleep(1000);
         timerActivityScreen.clickDisqualificationButton();
         timerActivityScreen.confirmDisqualification();
-        RingResultActivityScreen ringResultActivityScreen = timerActivityScreen.provideReasonAndDismissDisqualificationDialog("Bo jest dupkiem.");
+        RingSummaryActivityScreen ringSummaryActivityScreen = timerActivityScreen.provideReasonAndDismissDisqualificationDialog("Bo jest dupkiem.");
 
         // TODO: 07.03.2023 This shoud finally lead to summary of all 4 rings!
-        Assert.assertEquals("0 pkt.", ringResultActivityScreen.getSummaryPoints());
+        Assert.assertEquals("0 pkt.", ringSummaryActivityScreen.getSummaryPoints());
         UserScore userScore1 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_1);
         UserScore userScore2 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_2);
         UserScore userScore3 = mainActivityScreen.db.userScoresDao().getUserScore(userId, Dictionary.Difficulty.Advanced.NAME, Dictionary.Rings.RING_3);

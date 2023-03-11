@@ -1,12 +1,16 @@
 package com.example.nakama.Activities.OverallImpressionActivity;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.nakama.Activities.TopBar.TopBarViewManager;
+import com.example.nakama.DataBase.AppDatabase;
 import com.example.nakama.R;
+import com.example.nakama.SharedPreferences.AppPreferences;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -17,7 +21,10 @@ public class OverallImpressionViewManager {
 
     public OverallImpressionViewManager(AppCompatActivity activity) {
         this.activity = activity;
+        AppPreferences appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
+        AppDatabase db = AppDatabase.getInstance(activity);
         impressionsLayout = activity.findViewById(R.id.impressionsLinearLayout);
+        TopBarViewManager topBarViewManager = new TopBarViewManager(activity, db.getUser(appPreferences.getUserId()), appPreferences.getDifficulty(), appPreferences.getActiveRing());
     }
 
     public void addNewImpression(){

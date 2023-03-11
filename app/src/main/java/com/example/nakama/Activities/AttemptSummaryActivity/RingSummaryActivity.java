@@ -8,16 +8,31 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
+import com.example.nakama.DataBase.AppDatabase;
+import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
+import com.example.nakama.SharedPreferences.AppPreferences;
+import com.example.nakama.Utils.Dictionary;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class AttemptSummaryActivity extends AppCompatActivity {
+public class RingSummaryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppPreferences appPreferences = new AppPreferences(getSharedPreferences(AppPreferences.NAME, MODE_PRIVATE));
+        switch (appPreferences.getDifficulty()){
+            case Dictionary.Difficulty.Basic.NAME:
+                setTheme(R.style.Theme_NAKAMA_BasicLevelTheme);
+                break;
+            case Dictionary.Difficulty.Advanced.NAME:
+                setTheme(R.style.Theme_NAKAMA_AdvancedLevelTheme);
+                break;
+        }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_attempt_summary);
-        AttemptSummaryActivityViewManager viewManager = new AttemptSummaryActivityViewManager(this);
+        setContentView(R.layout.activity_ring_summary);
+        AppDatabase db = AppDatabase.getInstance(this);
+        Users users = db.getUser(appPreferences.getUserId());
+        RingSummaryActivityViewManager viewManager = new RingSummaryActivityViewManager(this, users, appPreferences.getDifficulty(), appPreferences.getActiveRing());
         viewManager.setUserScore();
     }
 
@@ -30,7 +45,7 @@ public class AttemptSummaryActivity extends AppCompatActivity {
     }
 
     public void showConfirmNewAttemptDialog() {
-        new MaterialAlertDialogBuilder(AttemptSummaryActivity.this)
+        new MaterialAlertDialogBuilder(RingSummaryActivity.this)
                 .setTitle(R.string.confirm_dialog_title)
                 .setMessage(R.string.confirm_new_attempt_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {

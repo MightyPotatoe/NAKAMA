@@ -22,4 +22,18 @@ public abstract class Dictionary {
         public static final String RING_3 = "Ring 3";
         public static final String RING_4 = "Ring 4";
     }
+
+    public static int getAttemptTime(String difficulty){
+        if(difficulty.equals(Difficulty.Basic.NAME)){
+            return Difficulty.Basic.ATTEMPT_TIME;
+        }
+        return Difficulty.Advanced.ATTEMPT_TIME;
+    }
+
+    public static int getFalseAlarmsLimit(String difficulty){
+        if(difficulty.equals(Difficulty.Basic.NAME)){
+            return Difficulty.Basic.FALSE_ALARMS_LIMIT;
+        }
+        return Difficulty.Advanced.FALSE_ALARMS_LIMIT;
+    }
 }

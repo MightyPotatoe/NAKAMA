@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.nakama.Activities.AttemptSummaryActivity.AttemptSummaryActivity;
+import com.example.nakama.Activities.AttemptSummaryActivity.RingSummaryActivity;
 import com.example.nakama.Activities.OverallImpressionActivity.OverallImpressionActivity;
 import com.example.nakama.DataBase.AppDatabase;
 import com.example.nakama.DataBase.Entities.Users.Users;
@@ -279,7 +279,14 @@ public class TimerActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
                     viewManager.setTimerCurrentTime(0);
                     db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    db.userScoresDao().updateUserScoresAttemptTime(
+                            user.uid,
+                            appPreferences.getDifficulty(),
+                            appPreferences.getActiveRing(),
+                            Converter.millisToString(Dictionary.getAttemptTime(appPreferences.getDifficulty())));
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    Intent intent = new Intent(this, RingSummaryActivity.class);
+                    startActivity(intent);
                 })
                 .show();
     }
@@ -325,7 +332,14 @@ public class TimerActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
                     viewManager.setTimerCurrentTime(0);
                     db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
+                    db.userScoresDao().updateUserScoresAttemptTime(
+                            user.uid,
+                            appPreferences.getDifficulty(),
+                            appPreferences.getActiveRing(),
+                            Converter.millisToString(Dictionary.getAttemptTime(appPreferences.getDifficulty())));
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    Intent intent = new Intent(this, RingSummaryActivity.class);
+                    startActivity(intent);
                 })
                 .show();
     }
@@ -348,10 +362,20 @@ public class TimerActivity extends AppCompatActivity {
                     viewManager.setTimerCurrentTime(0);
                     db.userScoresDao().updateScorePoints(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), 0);
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
+                    db.userScoresDao().updateUserScoresAttemptTime(
+                            user.uid,
+                            appPreferences.getDifficulty(),
+                            appPreferences.getActiveRing(),
+                            Converter.millisToString(Dictionary.getAttemptTime(appPreferences.getDifficulty())));
+                    viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     if(disqualified){
                         showDisqualificationDialog(getResources().getString(R.string.defecation_disqualification_reason));
+                        return;
                     }
+                    Intent intent = new Intent(this, RingSummaryActivity.class);
+                    startActivity(intent);
                 })
+
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
     }
@@ -361,7 +385,8 @@ public class TimerActivity extends AppCompatActivity {
                 .setTitle(R.string.disqualification_dialog_title)
                 .setMessage(reason)
                 .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
-                    Intent intent = new Intent(this, AttemptSummaryActivity.class);
+                    // TODO: 11.03.2023 Should lead to all rings summary 
+                    Intent intent = new Intent(this, RingSummaryActivity.class);
                     startActivity(intent);
                 })
                 .show();
@@ -394,7 +419,7 @@ public class TimerActivity extends AppCompatActivity {
                 .setMessage(R.string.provide_disqualification_reason_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {
                     db.disqualifyContestant(user.uid, appPreferences.getDifficulty(), editText.getText().toString());
-                    Intent intent = new Intent(this, AttemptSummaryActivity.class);
+                    Intent intent = new Intent(this, RingSummaryActivity.class);
                     startActivity(intent);
                 })
                 .setCancelable(false)

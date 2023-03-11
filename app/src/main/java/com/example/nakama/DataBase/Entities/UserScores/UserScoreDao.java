@@ -20,11 +20,13 @@ public interface UserScoreDao {
     @Update
     void updateScores(UserScore... userScore);
 
-    @Query("select * from UserScore where user_id = :userId and difficulty = :difficulty and ring = :ring ")
+    @Query("select * from UserScore where user_id = :userId and difficulty = :difficulty and ring = :ring")
     UserScore getUserScore(int userId, String difficulty, String ring);
 
     @Query("delete from UserScore")
     void delete();
+    @Query("delete from UserScore where user_id = :userId and difficulty = :difficulty and ring = :ring")
+    void delete(int userId, String difficulty, String ring);
 
     @Query("update UserScore set attempt_time = :attempt_time where user_id = :userId and difficulty = :difficulty and ring = :ring")
     void updateUserScoresAttemptTime(int userId, String difficulty, String ring, String attempt_time);
