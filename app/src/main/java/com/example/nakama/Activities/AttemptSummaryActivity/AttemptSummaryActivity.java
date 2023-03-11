@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
 import com.example.nakama.R;
-import com.example.nakama.Utils.Converter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class AttemptSummaryActivity extends AppCompatActivity {
@@ -19,9 +18,7 @@ public class AttemptSummaryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attempt_summary);
         AttemptSummaryActivityViewManager viewManager = new AttemptSummaryActivityViewManager(this);
-        int attemptTime = getIntent().getIntExtra(TimerActivity.INTENT_EXTRA_TIME, 0);
-        viewManager.getTimeTextView().setText(Converter.millisToString(attemptTime));
-        viewManager.setUserScore(getIntent().getIntExtra(TimerActivity.INTENT_EXTRA_SCORE, 0));
+        viewManager.setUserScore();
     }
 
     @Override

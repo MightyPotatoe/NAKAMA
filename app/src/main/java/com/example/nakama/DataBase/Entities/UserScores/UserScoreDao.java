@@ -46,4 +46,8 @@ public interface UserScoreDao {
     int getUserScoresTreatDropped(int userId, String difficulty, String ring);
     @Query("update UserScore set defecation = :defecation where user_id = :userId and difficulty = :difficulty and ring = :ring")
     void updateUserScoresDefecation(int userId, String difficulty, String ring, boolean defecation);
+    @Query("update UserScore set overview = :overview where user_id = :userId and difficulty = :difficulty and ring = :ring")
+    void updateUserScoresOverallImpressions(int userId, String difficulty, String ring, String overview);
+    @Query("select disqualification_reason from UserScore where user_id = :userId and difficulty = :difficulty and ring = :ring")
+    String getUserScoresDisqualificationReason(int userId, String difficulty, String ring);
 }

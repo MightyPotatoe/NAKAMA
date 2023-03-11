@@ -52,11 +52,11 @@ public class TimerActivityViewManager {
         pauseButton = activity.findViewById(R.id.pauseButton);
         resetButton = activity.findViewById(R.id.resetButton);
         doneButton = activity.findViewById(R.id.doneButton);
-        difficultyImageView = activity.findViewById(R.id.timerDifficultyImage);
-        difficultyTextView = activity.findViewById(R.id.timerDifficultyTextView);
-        ringDetailsTextView = activity.findViewById(R.id.timerRingDetailsTextView);
-        userDetailsTextView = activity.findViewById(R.id.timerUserDetailsTextView);
-        topBarLayout = activity.findViewById(R.id.timerTopBarLayout);
+        difficultyImageView = activity.findViewById(R.id.topBarDifficultyImage);
+        difficultyTextView = activity.findViewById(R.id.topBarDifficultyTextView);
+        ringDetailsTextView = activity.findViewById(R.id.topBarRingDetailsTextView);
+        userDetailsTextView = activity.findViewById(R.id.topBarUserDetailsTextView);
+        topBarLayout = activity.findViewById(R.id.topBarLayout);
         actualScoreTextView = activity.findViewById(R.id.timerScore);
         falseAlarmsTextView = activity.findViewById(R.id.timerFalseAlarmCounter);
         defecationTextView = activity.findViewById(R.id.timerDefecationCounter);
@@ -75,7 +75,6 @@ public class TimerActivityViewManager {
         return timerTextView;
     }
     public void setViewToDefaultState(int timeInMillis, String difficulty, String ring, Users user){
-        //Initialize default view
         timerProgressBar.setMax(timeInMillis);
         setTimerCurrentTime(timeInMillis);
         playButton.setVisibility(View.VISIBLE);

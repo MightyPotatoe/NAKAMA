@@ -17,7 +17,7 @@
     <!--Confirm reset Dialog Resources-->
     <string name="confirm_reset_dialog_message">Czy na pewno chcesz zresetować podejście? Wszystkie dotychczasowe dane zostaną utracone.</string>
     <!--Confirm attempt Dialog Resources-->
-    <string name="confirm_attempt_dialog_message">Czy na pewno chcesz zakończyć podejście i przejść do podsumowania?</string>
+    <string name="confirm_attempt_dialog_message">Czy na pewno chcesz zakończyć podejście?</string>
     <!--Confirm false alarm Resources-->
     <string name="confirm_false_alarm_dialog_message">Czy na pewno chcesz zgłosić fałszywy alarm?</string>
     <!--Confirm positive alarm Resources-->
@@ -63,5 +63,23 @@
     <string name="disqualification_button">Dyskwalifikacja</string>
     <string name="samples_found_label">Znalezione próbki:</string>
     <string name="disqualification_reason_label">Powód dyskwalifikacji</string>
+
+    <!--                      -Overall Impression Resources-                                    -->
+    <!--Wrong score distribution resources-->
+    <string name="wrong_score_distribution_dialog_title">Przekroczono liczbę dostępnych punktów!</string>
+    <string name="wrong_score_distribution_dialog_message">Możesz wykorzystać maksymalnie 30 pkt. Rozdystrybuuj punkty w inny sposób.</string>
+    <!--Scores without description resources-->
+    <string name="score_without_description_dialog_title">Odbierasz punkty bez powodu!</string>
+    <string name="score_without_description_dialog_message">Nie można odebrać punktów bez podania przyczyny. Upewnij się, że każde wypełnione pole z punktacją zawiera swój opis.</string>
+    <!--Descriptions without scores resources-->
+    <string name="description_without_score_dialog_title">Opis bez punktacji!</string>
+    <string name="description_without_score_dialog_message">Nie można przeprocesować opisu bez przypisanej mu liczby punktów. Uzupełnij wartość punktową lub usuń opis jeśli go nie potrzebujesz.</string>
+    <string name="description">Opis</string>
+    <string name="score">Pkt.</string>
+    <string name="overall_impression_title">Wrażenia ogólne</string>
+    <string name="overall_impression_description_text">Opisz zachowanie za które chcesz odebrać punkty i podaj ile punktów chcesz za nie odebrać. \nMożesz odebrać maksymalnie 30pkt.</string>
+    <string name="skip">Pomiń</string>
+    <string name="save">Zapisz</string>
+    <string name="add">add</string>
 
 </resources>
