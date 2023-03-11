@@ -15,9 +15,9 @@ import com.example.nakama.Utils.Finder;
 
 import org.hamcrest.Matcher;
 
-public class OverallImpressionScreen extends BaseScreen{
+public class OverallImpressionActivityScreen extends BaseScreen{
 
-    public OverallImpressionScreen(ActivityScenario<?> scenario) {
+    public OverallImpressionActivityScreen(ActivityScenario<?> scenario) {
         super(scenario);
     }
 
@@ -42,13 +42,13 @@ public class OverallImpressionScreen extends BaseScreen{
         Action.clickOnView(addButton);
     }
 
-    public RingResultActivityScreen clickSaveButton(){
+    public RingSummaryActivityScreen clickSaveButton(){
         Action.clickOnView(saveButton);
-        return new RingResultActivityScreen(scenario);
+        return new RingSummaryActivityScreen(scenario);
     }
 
-    public RingResultActivityScreen clickSkipButton(){
+    public RingSummaryActivityScreen clickSkipButton(){
         Action.clickOnView(skipButton);
-        return new RingResultActivityScreen(scenario);
+        return new RingSummaryActivityScreen(scenario);
     }
 }

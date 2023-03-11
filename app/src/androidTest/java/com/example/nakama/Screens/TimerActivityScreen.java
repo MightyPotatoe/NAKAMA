@@ -122,17 +122,17 @@ public class TimerActivityScreen extends BaseScreen{
         validateDisqualificationConfirmationDialog();
         Action.clickByText(R.string.dialog_positive_yes_button);
     }
-    public OverallImpressionScreen confirmFinish() {
+    public OverallImpressionActivityScreen confirmFinish() {
         validateConfirmFinishDialog();
         Action.clickByText(R.string.dialog_positive_yes_button);
-        return new OverallImpressionScreen(scenario);
+        return new OverallImpressionActivityScreen(scenario);
     }
 
-    public RingResultActivityScreen provideReasonAndDismissDisqualificationDialog(String reason){
+    public RingSummaryActivityScreen provideReasonAndDismissDisqualificationDialog(String reason){
         validateDisqualificationReasonDialog();
         Action.sendKeys(reasonEditText, reason);
         Action.clickByText(R.string.dialog_positive_ok_button);
-        return new RingResultActivityScreen(scenario);
+        return new RingSummaryActivityScreen(scenario);
     }
 
     public void confirmFalseAlarm() {
@@ -148,9 +148,10 @@ public class TimerActivityScreen extends BaseScreen{
         validateTreatDroppedConfirmationDialog();
         Action.clickByText(R.string.dialog_positive_yes_button);
     }
-    public void confirmDefecation(){
+    public RingSummaryActivityScreen confirmDefecation(){
         validateDefecationConfirmationDialog();
         Action.clickByText(R.string.dialog_positive_yes_button);
+        return new RingSummaryActivityScreen(scenario);
     }
 
     public void confirmReset(){
@@ -162,17 +163,19 @@ public class TimerActivityScreen extends BaseScreen{
         validateConfirmResetDialog();
         Action.clickByText(R.string.dialog_negative_button);
     }
-    public void dismissFalseAlarmLimitReachedDialog(){
+    public RingSummaryActivityScreen dismissFalseAlarmLimitReachedDialog(){
         validateFalseAlarmLimitReachedDialog();
         Action.clickByText(R.string.dialog_positive_ok_button);
+        return new RingSummaryActivityScreen(scenario);
     }
     public void dismissAllSamplesFoundDialog(){
         validateAllSamplesFoundDialog();
         Action.clickByText(R.string.dialog_positive_ok_button);
     }
-    public void dismissTreatDroppedLimitReachedDialog(){
+    public RingSummaryActivityScreen dismissTreatDroppedLimitReachedDialog(){
         validateTreatDroppedLimitReachedDialog();
         Action.clickByText(R.string.dialog_positive_ok_button);
+        return new RingSummaryActivityScreen(scenario);
     }
 
     public void dismissTimeoutDialog(){
@@ -180,10 +183,10 @@ public class TimerActivityScreen extends BaseScreen{
         Action.clickByText(R.string.dialog_positive_ok_button);
     }
 
-    public RingResultActivityScreen dismissDisqualificationDialog(){
+    public RingSummaryActivityScreen dismissDisqualificationDialog(){
         validateDisqualificationDialog();
         Action.clickByText(R.string.dialog_positive_ok_button);
-        return new RingResultActivityScreen(scenario);
+        return new RingSummaryActivityScreen(scenario);
     }
 
     public void validateScores(int score, int falseAlarms, int defecation, int droppedTreats, int samplesFound){

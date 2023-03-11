@@ -25,13 +25,13 @@
     <!--Confirm treat dropped Resources-->
     <string name="confirm_treat_dropped_dialog_message">Czy na pewno odnotować upuszczenie smakołyka na ring?</string>
     <!--Confirm defecation Resources-->
-    <string name="confirm_defecation_dialog_message">Czy na pewno odnotować załatwianie potrzeb fizjologicznych na ringu?</string>
+    <string name="confirm_defecation_dialog_message">Czy na pewno odnotować załatwianie potrzeb fizjologicznych na ringu?\nSpowoduje to niezaliczenie ringu przez uczestnika.</string>
     <!--Confirm disqualification Resources-->
     <string name="confirm_disqualification_dialog_message">Czy na pewno chcesz zdyskwalifikować zawodnika?</string>
     <string name="provide_disqualification_reason_dialog_message">Wprowadź powód dyskwalifikacji i klinij \'Ok\'</string>
     <!--Confirm new attempt Dialog Resources-->
     <string name="confirm_new_attempt_dialog_message">Czy na pewno chcesz rozpocząć następne podejście?</string>
-    <string name="scored_points_label">Zdobyte punkty:</string>
+    <string name="scored_points_label">Uzyskane punkty:</string>
     <string name="time_of_attempt_label">Czas podejścia:</string>
     <string name="next_competitior_button_label">Następny zawodnik</string>
     <!--False alarm limit reached Dialog Resources-->
@@ -81,5 +81,9 @@
     <string name="skip">Pomiń</string>
     <string name="save">Zapisz</string>
     <string name="add">add</string>
+    <string name="failed_attempt">Niezaliczone</string>
+    <string name="score_details">Szczegóły punktacji</string>
+    <string name="overall_impression_label">Wrażenia ogólne:</string>
+    <string name="next">Dalej</string>
 
 </resources>

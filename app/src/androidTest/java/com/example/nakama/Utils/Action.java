@@ -114,4 +114,25 @@ public class Action {
         });
         return max[0];
     }
+
+    public static Integer getVisibility(final Matcher<View> matcher) {
+        final Integer[] visibility = {null};
+        onView(matcher).perform(new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isAssignableFrom(View.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return "getting visibility";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                visibility[0] = view.getVisibility();
+            }
+        });
+        return visibility[0];
+    }
 }

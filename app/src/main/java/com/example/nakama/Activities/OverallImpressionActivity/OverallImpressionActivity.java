@@ -7,10 +7,11 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.nakama.Activities.AttemptSummaryActivity.AttemptSummaryActivity;
+import com.example.nakama.Activities.AttemptSummaryActivity.RingSummaryActivity;
 import com.example.nakama.DataBase.AppDatabase;
 import com.example.nakama.R;
 import com.example.nakama.SharedPreferences.AppPreferences;
+import com.example.nakama.Utils.Dictionary;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -23,6 +24,15 @@ public class OverallImpressionActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppPreferences appPreferences = new AppPreferences(getSharedPreferences(AppPreferences.NAME, MODE_PRIVATE));
+        switch (appPreferences.getDifficulty()){
+            case Dictionary.Difficulty.Basic.NAME:
+                setTheme(R.style.Theme_NAKAMA_BasicLevelTheme);
+                break;
+            case Dictionary.Difficulty.Advanced.NAME:
+                setTheme(R.style.Theme_NAKAMA_AdvancedLevelTheme);
+                break;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_overall_impression);
         viewManager = new OverallImpressionViewManager(this);
@@ -31,7 +41,7 @@ public class OverallImpressionActivity extends AppCompatActivity{
     }
 
     public void onSkipButtonClick(View view) {
-        Intent intent = new Intent(this, AttemptSummaryActivity.class);
+        Intent intent = new Intent(this, RingSummaryActivity.class);
         startActivity(intent);
     }
 
@@ -76,7 +86,7 @@ public class OverallImpressionActivity extends AppCompatActivity{
         int userScore = db.userScoresDao().getUserScoresScore(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing());
         db.userScoresDao().updateScorePoints(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing(), userScore - totalMinusScoreDistributed);
         //save to db and update score
-        Intent intent = new Intent(this, AttemptSummaryActivity.class);
+        Intent intent = new Intent(this, RingSummaryActivity.class);
         startActivity(intent);
     }
 

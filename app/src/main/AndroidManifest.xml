@@ -22,7 +22,7 @@
         <service android:name=".Services.TimerService" />
 
         <activity
-            android:name=".Activities.AttemptSummaryActivity.AttemptSummaryActivity"
+            android:name=".Activities.AttemptSummaryActivity.RingSummaryActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.TimerActivity.TimerActivity"
