@@ -47,6 +47,10 @@
     <string name="defecation_disqualification_reason">Załatwianie potrzeb fizjologicznych na więcej niż jednym ringu.</string>
     <!--False alarm limit reached Dialog Resources-->
     <string name="disqualification_dialog_title">Zawodnik zdyskwalifikowany!</string>
+    <!--ConfirmClearing Data Dialog Resources-->
+    <string name="confirm_clearing_data_message">Czy jesteś pewien, że chcesz wyczyścić dane? Spowoduje to utratę wyników z wszystkich ringów, dla wszystkich uczestników, na wszystkich poziomach trudności.</string>
+    <string name="data_cleared_confirmation_message">Wyniki zostały usunięte.</string>
+
     <!--Main Activity Resources-->
     <string name="basic_level_title">Podstawowy</string>
     <string name="basic_level_description">Jedna próbka\n2:00 min czasu przeszukania </string>

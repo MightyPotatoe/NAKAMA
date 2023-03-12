@@ -3,6 +3,7 @@ package com.example.nakama.Activities.MainActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -74,5 +75,29 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), TimerActivity.class);
             startActivity(intent);
         }
+    }
+
+    public void onClearUsersData(View view) {
+        showConfirmClearingAllUserDataDialog();
+    }
+
+    public void showConfirmClearingAllUserDataDialog() {
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle(R.string.confirm_dialog_title)
+                .setMessage(R.string.confirm_clearing_data_message)
+                .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
+                    db.userScoresDao().delete();
+                    showDataDeletionConfirmationDialog();
+                })
+                .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
+                .show();
+    }
+
+    public void showDataDeletionConfirmationDialog() {
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle(R.string.confirm_dialog_title)
+                .setMessage(R.string.data_cleared_confirmation_message)
+                .setNeutralButton(R.string.dialog_positive_ok_button, (dialogInterface, i) -> {})
+                .show();
     }
 }
