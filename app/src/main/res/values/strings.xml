@@ -30,7 +30,7 @@
     <string name="confirm_disqualification_dialog_message">Czy na pewno chcesz zdyskwalifikować zawodnika?</string>
     <string name="provide_disqualification_reason_dialog_message">Wprowadź powód dyskwalifikacji i klinij \'Ok\'</string>
     <!--Confirm new attempt Dialog Resources-->
-    <string name="confirm_new_attempt_dialog_message">Czy na pewno chcesz rozpocząć następne podejście?</string>
+    <string name="confirm_new_attempt_dialog_message">Czy na pewno chcesz zamknąć ekran z wynikiem?</string>
     <string name="scored_points_label">Uzyskane punkty:</string>
     <string name="time_of_attempt_label">Czas podejścia:</string>
     <string name="next_competitior_button_label">Następny zawodnik</string>
@@ -89,5 +89,9 @@
     <string name="score_details">Szczegóły punktacji</string>
     <string name="overall_impression_label">Wrażenia ogólne:</string>
     <string name="next">Dalej</string>
+    <string name="ring_1">Ring 1</string>
+    <string name="ring_2">Ring 2</string>
+    <string name="ring_3">Ring 3</string>
+    <string name="ring_4">Ring 4</string>
 
 </resources>

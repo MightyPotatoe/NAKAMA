@@ -13,6 +13,7 @@ import com.example.nakama.DataBase.Entities.UserScores.UserScore;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
 import com.example.nakama.Utils.Converter;
+import com.example.nakama.Utils.Dictionary;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -62,9 +63,10 @@ public class TimerActivityViewManager {
     public TextView getTimerTextView() {
         return timerTextView;
     }
-    public void setViewToDefaultState(int timeInMillis, String difficulty, String ring, Users user){
-        timerProgressBar.setMax(timeInMillis);
-        setTimerCurrentTime(timeInMillis);
+    public void setViewToDefaultState(String difficulty, String ring, Users user){
+        timerProgressBar.setMax(Dictionary.getAttemptTime(difficulty));
+        setTimerCurrentTime(Dictionary.getAttemptTime(difficulty));
+
         playButton.setVisibility(View.VISIBLE);
         pauseButton.setVisibility(View.INVISIBLE);
         resetButton.setVisibility(View.INVISIBLE);

@@ -7,14 +7,14 @@ import static org.hamcrest.core.IsNot.not;
 
 import androidx.test.core.app.ActivityScenario;
 
-import com.example.nakama.Activities.AttemptSummaryActivity.RingSummaryActivity;
 import com.example.nakama.Activities.MainActivity.MainActivity;
 import com.example.nakama.R;
 import com.example.nakama.Screens.MainActivityScreen;
 import com.example.nakama.Screens.OverallImpressionActivityScreen;
 import com.example.nakama.Screens.RingSummaryActivityScreen;
+import com.example.nakama.Screens.SelectRingActivityScreen;
 import com.example.nakama.Screens.TimerActivityScreen;
-import com.example.nakama.Utils.Action;
+import com.example.nakama.Utils.Dictionary;
 import com.example.nakama.Utils.Validate;
 
 import org.junit.Assert;
@@ -44,25 +44,21 @@ public class RingSummaryActivityTests {
      *  Disqualification  label and reason - gone
      */
     @Test
-    public void score_should_be_displayed_correctly_and_with_all_details() throws InterruptedException {
+    public void score_should_be_displayed_correctly_and_with_all_details(){
         MainActivityScreen mainActivityScreen = new MainActivityScreen(ActivityScenario.launch(MainActivity.class));
-        mainActivityScreen.clickStartAdvancedModeButton();
-        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+        mainActivityScreen.db.userScoresDao().delete();
+        SelectRingActivityScreen selectRingActivityScreen = mainActivityScreen.clickStartAdvancedModeButton();
+        TimerActivityScreen timerActivityScreen = selectRingActivityScreen.clickRing1Button();
 
         timerActivityScreen.clickPlayButton();
-        Thread.sleep(1000);
         timerActivityScreen.clickTreatDroppedButton();
         timerActivityScreen.confirmTreatDropped();
-        Thread.sleep(1000);
         timerActivityScreen.clickFalseAlarm();
         timerActivityScreen.confirmFalseAlarm();
-        Thread.sleep(1000);
         timerActivityScreen.clickPositiveAlarm();
         timerActivityScreen.confirmPositiveAlarm();
-        Thread.sleep(1000);
         timerActivityScreen.clickFalseAlarm();
         timerActivityScreen.confirmFalseAlarm();
-        Thread.sleep(1000);
         timerActivityScreen.clickPositiveAlarm();
         timerActivityScreen.confirmPositiveAlarm();
         timerActivityScreen.dismissAllSamplesFoundDialog();
@@ -95,6 +91,7 @@ public class RingSummaryActivityTests {
 
         onView(ringSummaryActivityScreen.getDisqualificationReasonLabelElement()).check(matches(not(isDisplayed())));
         onView(ringSummaryActivityScreen.getDisqualificationReasonElement()).check(matches(not(isDisplayed())));
+        ringSummaryActivityScreen.closeScenario();
     }
 
     /**
@@ -109,7 +106,11 @@ public class RingSummaryActivityTests {
      */
     @Test
     public void max_score_should_be_obtained_when_timer_is_not_exceed() throws InterruptedException {
-        TimerActivityScreen timerActivityScreen = new TimerActivityScreen(2000, 500);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(ActivityScenario.launch(MainActivity.class));
+        mainActivityScreen.db.userScoresDao().delete();
+        SelectRingActivityScreen selectRingActivityScreen = mainActivityScreen.clickStartAdvancedModeButton();
+        TimerActivityScreen timerActivityScreen = selectRingActivityScreen.clickRing1Button();
+
         timerActivityScreen.clickPlayButton();
         Thread.sleep(500);
         timerActivityScreen.clickPauseButton();
@@ -118,6 +119,7 @@ public class RingSummaryActivityTests {
 
         RingSummaryActivityScreen ringSummaryActivityScreen = overallImpressionActivityScreen.clickSkipButton();
         Assert.assertEquals("200 pkt.", ringSummaryActivityScreen.getSummaryPoints());
+        ringSummaryActivityScreen.closeScenario();
     }
 
     /**
@@ -133,9 +135,14 @@ public class RingSummaryActivityTests {
      */
     @Test
     public void zero_score_should_be_obtained_when_timer_is_exceed() throws InterruptedException {
-        TimerActivityScreen timerActivityScreen = new TimerActivityScreen(2000, 500);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(ActivityScenario.launch(MainActivity.class));
+        Dictionary.DEBUG_MODE = true;
+        SelectRingActivityScreen selectRingActivityScreen = mainActivityScreen.clickStartBasicModeButton();
+        selectRingActivityScreen.clickRing1Button();
+        TimerActivityScreen timerActivityScreen = selectRingActivityScreen.confirmUserOverride();
+
         timerActivityScreen.clickPlayButton();
-        Thread.sleep(2500);
+        Thread.sleep(5000);
 
         timerActivityScreen.validateTimeoutDialog();
         timerActivityScreen.dismissTimeoutDialog();
@@ -143,8 +150,9 @@ public class RingSummaryActivityTests {
         OverallImpressionActivityScreen overallImpressionActivityScreen = timerActivityScreen.confirmFinish();
 
         RingSummaryActivityScreen ringSummaryActivityScreen = overallImpressionActivityScreen.clickSkipButton();
-        Assert.assertEquals("00:02:00", ringSummaryActivityScreen.getSummaryTime());
+        Assert.assertEquals("00:05:00", ringSummaryActivityScreen.getSummaryTime());
         Assert.assertEquals("0 pkt.", ringSummaryActivityScreen.getSummaryPoints());
+        ringSummaryActivityScreen.closeScenario();
     }
 
     /**
@@ -155,29 +163,34 @@ public class RingSummaryActivityTests {
      * Then TimerActivity is displayed
      */
     @Test
-    public void clicking_next_button_should_start_new_timer() {
-        ActivityScenario<RingSummaryActivity> scenario = ActivityScenario.launch(RingSummaryActivity.class);
-        Action.clickById(R.id.difficultySelectionCardButton);
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.confirm_new_attempt_dialog_message));
-        Action.clickByText(R.string.dialog_positive_yes_button);
-        Assert.assertTrue(Validate.isElementDisplayedById(R.id.timeProgressBar));
-        scenario.close();
+    public void clicking_next_button_should_open_main_activity() {
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(ActivityScenario.launch(MainActivity.class));
+        mainActivityScreen.db.userScoresDao().delete();
+        SelectRingActivityScreen selectRingActivityScreen = mainActivityScreen.clickStartBasicModeButton();
+        TimerActivityScreen timerActivityScreen = selectRingActivityScreen.clickRing1Button();
+        timerActivityScreen.clickPlayButton();
+        timerActivityScreen.clickDefecationButton();
+        RingSummaryActivityScreen ringSummaryActivityScreen = timerActivityScreen.confirmDefecation();
+
+        ringSummaryActivityScreen.clickNextButton();
+        ringSummaryActivityScreen.confirmNexAttempt();
+        Assert.assertTrue(Validate.isElementDisplayedById(R.id.clearUsersData));
+        ringSummaryActivityScreen.closeScenario();
     }
 
-    /**
-     * Given user is on Summary Activity
-     * When user clicks 'nastepny uczestnik'
-     * Then confirm dialog is displayed
-     * When user confirms dialog
-     * Then TimerActivity is displayed
-     */
     @Test
     public void clicking_cancel_on_confirm_new_attempt() {
-        ActivityScenario<RingSummaryActivity> scenario = ActivityScenario.launch(RingSummaryActivity.class);
-        Action.clickById(R.id.difficultySelectionCardButton);
-        Assert.assertTrue(Validate.isElementDisplayedByText(R.string.confirm_new_attempt_dialog_message));
-        Action.clickByText(R.string.dialog_negative_button);
+        MainActivityScreen mainActivityScreen = new MainActivityScreen(ActivityScenario.launch(MainActivity.class));
+        SelectRingActivityScreen selectRingActivityScreen = mainActivityScreen.clickStartBasicModeButton();
+        selectRingActivityScreen.clickRing1Button();
+        TimerActivityScreen timerActivityScreen = selectRingActivityScreen.confirmUserOverride();
+        timerActivityScreen.clickPlayButton();
+        timerActivityScreen.clickDefecationButton();
+        RingSummaryActivityScreen ringSummaryActivityScreen = timerActivityScreen.confirmDefecation();
+
+        ringSummaryActivityScreen.clickNextButton();
+        ringSummaryActivityScreen.cancelNexAttempt();
         Assert.assertTrue(Validate.isElementDisplayedById(R.id.summaryPointsValue));
-        scenario.close();
+        ringSummaryActivityScreen.closeScenario();
     }
 }

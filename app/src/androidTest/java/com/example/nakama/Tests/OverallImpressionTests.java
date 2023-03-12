@@ -9,6 +9,7 @@ import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.Screens.MainActivityScreen;
 import com.example.nakama.Screens.OverallImpressionActivityScreen;
 import com.example.nakama.Screens.RingSummaryActivityScreen;
+import com.example.nakama.Screens.SelectRingActivityScreen;
 import com.example.nakama.Screens.TimerActivityScreen;
 import com.example.nakama.Utils.Dictionary;
 
@@ -30,8 +31,10 @@ public class OverallImpressionTests {
         mainActivityScreen.db.addUserScoreIfNotExists(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1);
         mainActivityScreen.db.userScoresDao().updateScores(new UserScore(userId, Dictionary.Difficulty.Basic.NAME, Dictionary.Rings.RING_1, 75, "01:00:00", 1, true, 1,  0, "Ok", null));
 
-        mainActivityScreen.clickStartBasicModeButton();
-        TimerActivityScreen timerActivityScreen = mainActivityScreen.confirmUserOverride();
+        SelectRingActivityScreen selectRingActivityScreen = mainActivityScreen.clickStartBasicModeButton();
+        selectRingActivityScreen.clickRing1Button();
+        TimerActivityScreen timerActivityScreen = selectRingActivityScreen.confirmUserOverride();
+
         timerActivityScreen.clickPlayButton();
         UserScore userScore = timerActivityScreen.db.userScoresDao().getUserScore(timerActivityScreen.appPreferences.getUserId(), timerActivityScreen.appPreferences.getDifficulty(), timerActivityScreen.appPreferences.getActiveRing());
         Assert.assertEquals(200, userScore.score);
@@ -60,5 +63,6 @@ public class OverallImpressionTests {
         userScore = timerActivityScreen.db.userScoresDao().getUserScore(timerActivityScreen.appPreferences.getUserId(), timerActivityScreen.appPreferences.getDifficulty(), timerActivityScreen.appPreferences.getActiveRing());
         Assert.assertTrue(userScore.overview.contains("Opis 1"));
         Assert.assertTrue(userScore.overview.contains("Opis 2"));
+        ringSummaryActivityScreen.closeScenario();
     }
 }

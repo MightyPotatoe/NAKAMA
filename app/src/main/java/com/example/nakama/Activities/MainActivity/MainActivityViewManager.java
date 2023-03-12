@@ -41,12 +41,12 @@ public class MainActivityViewManager {
 
         basicLevelCardTitle = basicLevelCardView.findViewById(R.id.difficultySelectionCardHeadline);
         basicLevelCardDescription = basicLevelCardView.findViewById(R.id.difficultySelectionCardDescription);
-        basicLevelButton = basicLevelCardView.findViewById(R.id.difficultySelectionCardButton);
+        basicLevelButton = basicLevelCardView.findViewById(R.id.ringSummaryNextButton);
         basicLevelImage = basicLevelCardView.findViewById(R.id.difficultySelectionCardImage);
 
         advancedLevelCardTitle = advancedLevelCardView.findViewById(R.id.difficultySelectionCardHeadline);
         advancedLevelCardDescription = advancedLevelCardView.findViewById(R.id.difficultySelectionCardDescription);
-        advancedLevelButton = advancedLevelCardView.findViewById(R.id.difficultySelectionCardButton);
+        advancedLevelButton = advancedLevelCardView.findViewById(R.id.ringSummaryNextButton);
         advancedLevelImage = advancedLevelCardView.findViewById(R.id.difficultySelectionCardImage);
     }
 

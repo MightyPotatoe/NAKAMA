@@ -1,6 +1,8 @@
 package com.example.nakama.Utils;
 
 public abstract class Dictionary {
+
+    public static boolean DEBUG_MODE = false;
     public static class Difficulty{
         public static final class Basic{
             public static final String NAME = "Podstawowy";
@@ -25,7 +27,13 @@ public abstract class Dictionary {
 
     public static int getAttemptTime(String difficulty){
         if(difficulty.equals(Difficulty.Basic.NAME)){
+            if(Dictionary.DEBUG_MODE){
+                return 5000;
+            }
             return Difficulty.Basic.ATTEMPT_TIME;
+        }
+        if(Dictionary.DEBUG_MODE){
+            return 7000;
         }
         return Difficulty.Advanced.ATTEMPT_TIME;
     }
@@ -35,5 +43,12 @@ public abstract class Dictionary {
             return Difficulty.Basic.FALSE_ALARMS_LIMIT;
         }
         return Difficulty.Advanced.FALSE_ALARMS_LIMIT;
+    }
+
+    public static int getSamplesOnRing(String difficulty){
+        if(difficulty.equals(Difficulty.Basic.NAME)){
+            return Difficulty.Basic.SAMPLES_TO_FIND;
+        }
+        return Difficulty.Advanced.SAMPLES_TO_FIND;
     }
 }
