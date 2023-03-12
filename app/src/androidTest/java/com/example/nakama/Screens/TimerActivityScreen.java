@@ -8,16 +8,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.isNotEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.core.IsNot.not;
 
-import android.content.Context;
 import android.view.View;
 
 import androidx.test.core.app.ActivityScenario;
 
-import com.example.nakama.Activities.TimerActivity.TimerActivity;
 import com.example.nakama.DataBase.Entities.UserScores.UserScore;
-import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
-import com.example.nakama.SharedPreferences.AppPreferences;
 import com.example.nakama.Utils.Action;
 import com.example.nakama.Utils.Converter;
 import com.example.nakama.Utils.Validate;
@@ -68,26 +64,7 @@ public class TimerActivityScreen extends BaseScreen{
         super(scenario);
         scenario.onActivity(activity -> appPreferences.setPollingFrequency(500));
     }
-    public TimerActivityScreen(ActivityScenario<?> scenario, int time) {
-        super(scenario);
-        scenario.onActivity(activity -> {
-            appPreferences.setPollingFrequency(500);
-            appPreferences.setRingTime(time);
-        });
-    }
 
-    public TimerActivityScreen(int timer, int pollingFrequency){
-        super(ActivityScenario.launch(TimerActivity.class));
-        scenario.onActivity(activity -> {
-            appPreferences = new AppPreferences(activity.getSharedPreferences(AppPreferences.NAME, Context.MODE_PRIVATE));
-            appPreferences.setPollingFrequency(pollingFrequency);
-            appPreferences.setRingTime(timer);
-            Users defaultUser = new Users("Tomasz", "Szymaniak", "Nala");
-            int userId = db.getUserId(defaultUser);
-            db.clearUserScore(userId, appPreferences.getDifficulty(), appPreferences.getActiveRing());
-        });
-        scenario.recreate();
-    }
     public void clickPlayButton() {
         Action.clickOnView(playButton);
     }

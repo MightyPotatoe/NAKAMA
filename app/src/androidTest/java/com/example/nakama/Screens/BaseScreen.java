@@ -23,4 +23,8 @@ public class BaseScreen {
             }
         });
     }
+
+    public void closeScenario(){
+        scenario.close();
+    }
 }

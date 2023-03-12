@@ -7,7 +7,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.nakama.Activities.TimerActivity.TimerActivity;
+import com.example.nakama.Activities.MainActivity.MainActivity;
 import com.example.nakama.DataBase.AppDatabase;
 import com.example.nakama.DataBase.Entities.Users.Users;
 import com.example.nakama.R;
@@ -37,9 +37,7 @@ public class RingSummaryActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        showConfirmNewAttemptDialog();
-    }
+    public void onBackPressed() {}
     public void onNextAttemptButtonCLick(View view) {
         showConfirmNewAttemptDialog();
     }
@@ -49,7 +47,7 @@ public class RingSummaryActivity extends AppCompatActivity {
                 .setTitle(R.string.confirm_dialog_title)
                 .setMessage(R.string.confirm_new_attempt_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
-                    Intent intent = new Intent(this, TimerActivity.class);
+                    Intent intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
                 })
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})

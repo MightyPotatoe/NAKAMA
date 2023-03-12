@@ -10,6 +10,7 @@ import com.example.nakama.R;
 import com.example.nakama.Utils.Action;
 import com.example.nakama.Utils.Converter;
 import com.example.nakama.Utils.Finder;
+import com.example.nakama.Utils.Validate;
 
 import org.hamcrest.Matcher;
 import org.junit.Assert;
@@ -30,6 +31,7 @@ public class RingSummaryActivityScreen extends BaseScreen{
     private final Matcher<View> impressionScore =  withId(R.id.overallImpressionScore);
     private final Matcher<View> disqualificationReasonLabel =  withId(R.id.disqualificationReasonLabel);
     private final Matcher<View> disqualificationReason =  withId(R.id.disqualificationReasonText);
+    private final Matcher<View> nextButton =  withId(R.id.ringSummaryNextButton);
 
     public RingSummaryActivityScreen(ActivityScenario<?> scenario) {
         super(scenario);
@@ -86,5 +88,27 @@ public class RingSummaryActivityScreen extends BaseScreen{
 
     public String getDescriptionScoreAtPosition(int index){
         return Action.getText(Finder.getElementFromMatchAtPosition(impressionScore, index));
+    }
+
+    public void clickNextButton(){
+        Action.clickOnView(nextButton);
+    }
+
+    public MainActivityScreen confirmNexAttempt(){
+        validateConfirmNextAttemptDialog();
+        Action.clickByText(R.string.dialog_positive_yes_button);
+        return new MainActivityScreen(scenario);
+    }
+
+    public void cancelNexAttempt(){
+        validateConfirmNextAttemptDialog();
+        Action.clickByText(R.string.dialog_negative_button);
+    }
+
+    public void validateConfirmNextAttemptDialog(){
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_dialog_title));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.confirm_new_attempt_dialog_message));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_positive_yes_button));
+        Assert.assertTrue(Validate.isElementInDialogDisplayedByText(R.string.dialog_negative_button));
     }
 }

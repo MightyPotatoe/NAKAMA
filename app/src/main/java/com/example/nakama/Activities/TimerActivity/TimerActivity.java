@@ -69,7 +69,6 @@ public class TimerActivity extends AppCompatActivity {
         wakeLock.acquire(15*60*1000L /*15 minutes*/);
         //Initialize default view
         viewManager.setViewToDefaultState(
-                appPreferences.getRingTime(),
                 appPreferences.getDifficulty(),
                 appPreferences.getActiveRing(),
                 user);
@@ -103,7 +102,7 @@ public class TimerActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             //get BROADCAST_TIMER_VALUE from broadcast and process it
-            long timeLeft = intent.getLongExtra(TimerService.BROADCAST_TIMER_VALUE, appPreferences.getRingTime());
+            long timeLeft = intent.getLongExtra(TimerService.BROADCAST_TIMER_VALUE, Dictionary.getAttemptTime(appPreferences.getDifficulty()));
             if(!TimerService.forcedFinish){
                 viewManager.setTimerCurrentTime(timeLeft);
             }
@@ -187,7 +186,6 @@ public class TimerActivity extends AppCompatActivity {
                 .setMessage(R.string.confirm_reset_dialog_message)
                 .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
                     viewManager.setViewToDefaultState(
-                            appPreferences.getRingTime(),
                             appPreferences.getDifficulty(),
                             appPreferences.getActiveRing(),
                             user);
@@ -206,7 +204,7 @@ public class TimerActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.dialog_positive_yes_button, (dialogInterface, i) -> {
                     //getting duration of this run
                     int timeLeft = Converter.stringToMillis((String) viewManager.getTimerTextView().getText());
-                    int runTimeInMillis = appPreferences.getRingTime() - timeLeft;
+                    int runTimeInMillis = Dictionary.getAttemptTime(appPreferences.getDifficulty()) - timeLeft;
                     db.userScoresDao().updateUserScoresAttemptTime(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing(), Converter.millisToString(runTimeInMillis));
                     Intent intent = new Intent(this, OverallImpressionActivity.class);
                     startActivity(intent);
@@ -237,7 +235,7 @@ public class TimerActivity extends AppCompatActivity {
                     //Update score
                     int currentScore = db.userScoresDao().getUserScoresScore(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
-                    if(currentFalseAlarms > appPreferences.getFalseAlarmsLimit()){
+                    if(currentFalseAlarms > Dictionary.getFalseAlarmsLimit(appPreferences.getDifficulty())){
                         stopTimerAndStopService();
                         viewManager.setViewToFinishedState();
                         showFalseAlarmLimitDialog();
@@ -262,7 +260,7 @@ public class TimerActivity extends AppCompatActivity {
                     db.userScoresDao().updateUserScoresSamplesFound(user.uid, appPreferences.getDifficulty(), appPreferences.getActiveRing(), samplesFound);
                     viewManager.updateScores(db, user, appPreferences.getDifficulty(), appPreferences.getActiveRing());
                     //If all samples found stop timer
-                    if(samplesFound == appPreferences.getSamplesInRun()){
+                    if(samplesFound == Dictionary.getSamplesOnRing(appPreferences.getDifficulty())){
                         stopTimerAndStopService();
                         viewManager.setViewToFinishedState();
                         showAllSamplesFoundDialog();
