@@ -93,5 +93,13 @@
     <string name="ring_2">Ring 2</string>
     <string name="ring_3">Ring 3</string>
     <string name="ring_4">Ring 4</string>
+    <string name="show_results_button_text">Pokaż wyniki</string>
+
+
+    <string name="disrupted_attempt">"Przerwane podejście"</string>
+    <string name="no_record">"Brak wpisu"</string>
+    <string name="show_more">Rozwiń</string>
+    <string name="hide_more">Zwiń</string>
+    <string name="disqualified">Zdyskwalifikowany</string>
 
 </resources>

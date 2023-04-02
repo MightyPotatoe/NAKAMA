@@ -8,6 +8,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.nakama.Activities.TimerActivity.TimerActivity;
+import com.example.nakama.Activities.UserRingsResultsActivity.UserRingsResultsActivity;
 import com.example.nakama.DataBase.AppDatabase;
 import com.example.nakama.DataBase.Entities.UserScores.UserScore;
 import com.example.nakama.DataBase.Entities.Users.Users;
@@ -35,7 +36,7 @@ public class SelectRingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_ring);
         SelectRingActivityViewManager viewManager = new SelectRingActivityViewManager(this);
         db = AppDatabase.getInstance(this);
-        viewManager.setViewToDefaultState(appPreferences.getDifficulty(), appPreferences.getActiveRing(), db.usersDao().getUser(appPreferences.getUserId()));
+        viewManager.setViewToDefaultState(appPreferences.getDifficulty(), "Wybór ringu", db.usersDao().getUser(appPreferences.getUserId()));
         viewManager.checkIfRingIsDone();
     }
 
@@ -55,10 +56,6 @@ public class SelectRingActivity extends AppCompatActivity {
         appPreferences.setActiveRing(Dictionary.Rings.RING_4);
         askIfOverrideAndStartTimerActivity();
     }
-
-
-
-
 
     public void askIfOverrideAndStartTimerActivity(){
         if(!db.addUserScoreIfNotExists(appPreferences.getUserId(), appPreferences.getDifficulty(), appPreferences.getActiveRing())){
@@ -83,5 +80,10 @@ public class SelectRingActivity extends AppCompatActivity {
                 })
                 .setNegativeButton(R.string.dialog_negative_button, (dialogInterface, i) -> {})
                 .show();
+    }
+
+    public void onShowResultsButtonClick(View view) {
+        Intent intent = new Intent(getApplicationContext(), UserRingsResultsActivity.class);
+        startActivity(intent);
     }
 }

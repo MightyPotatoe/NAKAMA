@@ -21,6 +21,7 @@ public class SelectRingActivityViewManager {
     MaterialButton ring2Button;
     MaterialButton ring3Button;
     MaterialButton ring4Button;
+    MaterialButton showUserResultsButton;
 
     public SelectRingActivityViewManager(AppCompatActivity activity) {
         this.activity = activity;
@@ -28,6 +29,7 @@ public class SelectRingActivityViewManager {
         ring2Button = activity.findViewById(R.id.ring2Button);
         ring3Button = activity.findViewById(R.id.ring3Button);
         ring4Button = activity.findViewById(R.id.ring4Button);
+        showUserResultsButton = activity.findViewById(R.id.showResultsButton);
     }
 
     public void setViewToDefaultState(String difficulty, String ring, Users user){
@@ -64,7 +66,6 @@ public class SelectRingActivityViewManager {
         else{
             ring4Button.setIcon(AppCompatResources.getDrawable(activity, R.drawable.baseline_check_circle_24));
         }
-
     }
 
 }
