@@ -1,51 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Activities.AttemptSummaryActivity.RingSummaryActivity">
-
-    <include
-        android:id="@+id/timerTopBarLayout"
-        layout="@layout/top_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:layout_height="match_parent">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_view"
         style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_margin="32dp"
         android:layout_weight="1"
         android:elevation="120dp"
-        app:layout_constraintBottom_toTopOf="@+id/ringSummaryNextButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timerTopBarLayout">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/summaryPointsValue"
-                style="@style/TextAppearance.Material3.DisplaySmall"
+                android:id="@+id/ringLabel"
+                style="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?colorPrimary"
-                android:gravity="center"
                 android:padding="8dp"
+                android:text="Ring 1 - 200 pkt."
                 android:textColor="?colorOnPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
 
             <TableLayout
                 android:id="@+id/ringSummaryTable"
@@ -55,7 +41,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/summaryPointsValue">
+                app:layout_constraintTop_toBottomOf="@+id/ringLabel">
 
                 <TableRow android:padding="4dp">
 
@@ -79,6 +65,7 @@
                 <TableRow android:padding="4dp">
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/samplesFoundLabel"
                         style="@style/TextAppearance.Material3.BodyLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -95,18 +82,62 @@
                 </TableRow>
             </TableLayout>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/scoreDetailsLabel"
-                style="@style/TextAppearance.Material3.TitleSmall"
+            <LinearLayout
+                android:id="@+id/moreDetailsLayoutBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="?colorPrimary"
-                android:padding="4dp"
-                android:text="@string/score_details"
-                android:textColor="?colorOnPrimary"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/ringSummaryTable" />
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ringSummaryTable">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/scoreDetailsLabel"
+                    style="@style/TextAppearance.Material3.TitleSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:padding="4dp"
+                    android:text="@string/score_details"
+                    android:textColor="?colorOnPrimary"
+                    android:textStyle="bold" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/showMoreLayout"
+                    android:layout_gravity="end"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/showDetails"
+                        style="@style/TextAppearance.Material3.TitleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?colorPrimary"
+                        android:padding="4dp"
+                        android:text="@string/show_more"
+                        android:textColor="?colorOnPrimary"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/showDetailsIcon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/showDetailsIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/baseline_expand_more_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
 
             <TableLayout
                 android:id="@+id/scoreDetailsContainer"
@@ -115,8 +146,9 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/scoreDetailsLabel">
+                app:layout_constraintTop_toBottomOf="@+id/moreDetailsLayoutBar">
 
                 <TableRow android:padding="4dp">
 
@@ -187,7 +219,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:gravity="start"/>
+                        android:gravity="start" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/summaryDroppedTreatsScoreImpact"
@@ -221,23 +253,24 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/scoreDetailsContainer">
+                app:layout_constraintTop_toBottomOf="@id/scoreDetailsContainer"
+                android:visibility="gone">
 
             </LinearLayout>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/disqualificationReasonLabel"
-                style="@style/TextAppearance.Material3.TitleSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="?colorErrorContainer"
-                android:textColor="?colorOnErrorContainer"
-                android:padding="4dp"
-                android:text="@string/disqualification_reason_label"
-                android:textStyle="bold"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@+id/overallImpressionContainer" />
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/disqualificationReasonLabel"
+                            style="@style/TextAppearance.Material3.TitleSmall"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="?colorErrorContainer"
+                            android:textColor="?colorOnErrorContainer"
+                            android:padding="4dp"
+                            android:text="@string/disqualification_reason_label"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            app:layout_constraintTop_toBottomOf="@+id/overallImpressionContainer" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/disqualificationReasonText"
@@ -250,17 +283,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/ringSummaryNextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:onClick="onNextAttemptButtonCLick"
-        android:text="@string/next"
-        app:icon="@drawable/baseline_check_circle_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -73,4 +73,16 @@
         android:onClick="onSelectRing4ButtonClick"/>
 
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/showResultsButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:onClick="onShowResultsButtonClick"
+        android:text="@string/show_results_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/ring4Button"
+        app:layout_constraintStart_toStartOf="@+id/ring4Button" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

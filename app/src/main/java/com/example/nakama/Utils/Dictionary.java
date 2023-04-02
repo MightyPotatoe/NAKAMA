@@ -23,6 +23,8 @@ public abstract class Dictionary {
         public static final String RING_2 = "Ring 2";
         public static final String RING_3 = "Ring 3";
         public static final String RING_4 = "Ring 4";
+
+        public static final String[] ringsList = {RING_1, RING_2, RING_3, RING_4};
     }
 
     public static int getAttemptTime(String difficulty){

@@ -93,12 +93,14 @@ public abstract class AppDatabase extends RoomDatabase {
         userScoresDao().updateScores(userScore);
     }
     public boolean checkAllRingsForAnyDefecation(int userId, String difficulty){
-        addUserScoreForAllRingsIfNotExists(userId, difficulty);
-        UserScore userScoreForRing1 = userScoresDao().getUserScore(userId, difficulty, Dictionary.Rings.RING_1);
-        UserScore userScoreForRing2 = userScoresDao().getUserScore(userId, difficulty, Dictionary.Rings.RING_2);
-        UserScore userScoreForRing3 = userScoresDao().getUserScore(userId, difficulty, Dictionary.Rings.RING_3);
-        UserScore userScoreForRing4 = userScoresDao().getUserScore(userId, difficulty, Dictionary.Rings.RING_4);
-        return userScoreForRing1.defecation || userScoreForRing2.defecation || userScoreForRing3.defecation || userScoreForRing4.defecation;
+        boolean defecationFound = false;
+        for(String ring : Dictionary.Rings.ringsList){
+            UserScore userScoreForRing = userScoresDao().getUserScore(userId, difficulty, ring);
+            if(userScoreForRing != null){
+                defecationFound |= userScoreForRing.defecation;
+            }
+        }
+        return defecationFound;
     }
 
     public void disqualifyContestant(int userId, String difficulty, String reason){
